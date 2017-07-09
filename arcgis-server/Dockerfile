@@ -21,7 +21,6 @@ ADD ArcGIS_Server_Linux_105*.tar.gz ${HOME}
 
 # Add the script that can create the initial admin user and site
 ADD create_new_site.py ${HOME}
-RUN virtualenv venv && . venv/bin/activate && pip install requests
 
 RUN chown -R arcgis.arcgis ${HOME}
 
@@ -48,6 +47,12 @@ VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", \
 
 # Change command line prompt
 ADD bashrc ./.bashrc
+
+RUN virtualenv venv && . venv/bin/activate && pip install requests
+# I can't actually run the create_new_site.py here because it will have
+# the usual stupid problems
+# It has to take place after the container is created and arcgis server running
+#RUN ./venv/bin/python create_new_site.py
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:6080 || exit 1
 
