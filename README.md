@@ -84,3 +84,33 @@ On my machine I see this
 Run them using the Docker Compose commands that I have not yet written...
 working on it RIGHT NOW!!! 2017-Jul-09
 
+## Resources
+
+You can learn a lot about how ESRI thinks provisioning should be done by reading the source
+code from their [Github Chef](https://github.com/Esri/arcgis-cookbook) repository. For example, here is
+the code that creates a site by using REST. This is ruby code from
+arcgis-cookbook/cookbooks/arcgis-enterprise/libraries/server_admin_client.rb
+that is pretty easy to read, basically it's filling in a form and sending it.
+
+      log_settings = {
+        'logLevel' => log_level,
+        'logDir' => log_dir,
+        'maxErrorReportsCount' => 10,
+        'maxLogFileAge' => max_log_file_age }
+
+      request = Net::HTTP::Post.new(URI.parse(
+        @server_url + '/admin/createNewSite').request_uri)
+
+      request.set_form_data('username' => @admin_username,
+                            'password' => @admin_password,
+                            'configStoreConnection' => config_store_connection.to_json,
+                            'directories' => directories.to_json,
+                            'settings' => log_settings.to_json,
+                            'cluster' => '',
+                            'f' => 'json')
+
+      response = send_request(request, @server_url)
+
+      validate_response(response)
+
+You should be able to see the form by going to https://yourserver:6443/admin/createNewSite
