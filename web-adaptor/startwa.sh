@@ -20,13 +20,10 @@
 USER="siteadmin"
 PASS="changeit"
 
-# Check for required environment variables
-if [ "${WA_FQDN}" == "" ] || [ "${PORTAL_FQDN}" == "" ]; then
-   echo "These have to be defined in the environment"
-   echo "WA_FQDN full name of the web adapter"
-   echo "PORTAL_FQDN full name of portal"
-   exit 1
-fi
+# These are defined using "--net-alias" option when you start the respective containers.
+# See the runwa and runportal scripts for example
+WA_FQDN="web-adaptor.localdomain"
+PORTAL_FQDN="portal.localdomain"
 
 echo "Is Tomcat running?"
 curl --retry 3 -sS "http://${WA_FQDN}/arcgis/webadaptor" > /tmp/apphttp

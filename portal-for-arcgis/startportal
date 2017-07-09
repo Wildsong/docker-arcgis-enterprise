@@ -1,16 +1,17 @@
 # Docker command to start a detached Portal
 #
-PORTAL_FQDN="portal.localdomain"
-PORTAL_NAME="portal-for-server"
+MYNAME="portal-for-server"
+HOSTNAME=`hostname`
 
 # Stop a previous instance, if any.
-docker rm ${PORTAL_NAME}
+docker stop ${MYNAME} > /dev/null 2>&1
+docker rm ${MYNAME} > /dev/null 2>&1
 
 echo "Docker is starting Portal for Server in detached mode."
-echo "Portal URL is https://${PORTAL_FQDN}:7443/arcgis/home"
-echo "see also https://${PORTAL_FQDN}:7443/arcgis/portaladmin if you get a blank home page"
+echo "Portal URL is https://${HOSTNAME}:7443/arcgis/home"
+echo "see also https://${HOSTNAME}:7443/arcgis/portaladmin if you get a blank home page"
 
-docker run -d --name ${PORTAL_NAME} \
-  -p 7080:7080 -p 7443:7443 --net arcgis-network \
+docker run -d --name=${MYNAME} --net-alias=${MYNAME} --net=arcgis-network \
+  -p 7080:7080 -p 7443:7443 \
   geoceg/portal-for-arcgis
 
