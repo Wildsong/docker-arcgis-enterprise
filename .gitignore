@@ -6,3 +6,6 @@
 
 # emacs backups
 *~
+
+# ignore python virtual environments
+venv/
