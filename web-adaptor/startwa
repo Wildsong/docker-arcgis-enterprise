@@ -1,0 +1,18 @@
+# Docker command to start Web Adaptor container in detached mode.
+
+WA_FQDN="webadaptor.localdomain"
+WA_NAME="web-adaptor"
+
+# Stop a previous instance, if any.
+docker stop ${WA_NAME}
+docker rm ${WA_NAME}
+
+echo "Docker is starting in detached mode."
+echo "Web-Adaptor URL set up is https://${WA_FQDN}/arcgis/webadaptor"
+echo "Web-Adaptor URL portal is https://${WA_FQDN}/arcgis/home"
+
+docker run -d --name web-adaptor \
+   -p 80:80 -p 443:443 \
+   --net arcgis-network --link portal-for-arcgis:portal \
+   -e WA_FQDN=${WA_FQDN} -e PORTAL_FQDN=${PORTAL_FQDN} \
+   geoceg/web-adaptor

@@ -1,0 +1,5 @@
+# I don't want to copy these files into the image.
+Web_Adaptor_Java
+.git/
+*~
+data/

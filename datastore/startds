@@ -1,0 +1,15 @@
+# Docker command to start ArcGIS Datastore container in detached mode.
+
+DS_FQDN="arcgis.localdomain"
+DS_NAME="datastore"
+
+# Stop a previous instance, if any.
+docker stop ${DS_NAME}
+docker rm ${DS_NAME}
+
+echo "Docker is starting in detached mode."
+echo "Datastore URL is https://${DS_FQDN}:2443/arcgis/datastore"
+
+docker run -d --name datastore \
+  -p 2443:2443 --net arcgis-network \
+   geoceg/arcgis-datastore

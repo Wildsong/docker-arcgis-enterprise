@@ -1,0 +1,5 @@
+# I don't want to copy these files into the image.
+PortalForArcGIS
+.git/
+*~
+data/

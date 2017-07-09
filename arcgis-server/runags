@@ -1,0 +1,27 @@
+# Docker command to start ArcGIS Server container in interactive mode;
+# you will have to start the server running from a command prompt.
+# NOTE: The container will stop when you exit from the shell!
+
+AGS_FQDN="arcgis.localdomain"
+AGS_NAME="arcgis-server"
+
+# Stop a previous instance, if any.
+docker stop ${AGS_NAME}
+docker rm ${AGS_NAME}
+
+echo "Docker is starting in interactive mode."
+echo "Management URL is http://${AGS_FQDN}:6080/arcgis/manager"
+echo "Some commands--"
+echo "Check licenses: ./server/tools/authorizeSoftware -s"
+echo "Start AGS       ./server/startserver.sh"
+
+# Start a new server container
+docker run -it --rm --name ${AGS_NAME} --hostname=${AGS_FQDN} \
+   --net arcgis-network -p 6080:6080 -p 6443:6443 \
+   -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
+   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
+   -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
+   -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+   geoceg/arcgis-server bash
+
+echo "${AGS_NAME} docker removed."

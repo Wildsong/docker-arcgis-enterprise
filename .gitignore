@@ -1,0 +1,8 @@
+# tar balls
+*.tar.gz
+
+# license files
+*.prvc
+
+# emacs backups
+*~
