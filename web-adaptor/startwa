@@ -4,8 +4,8 @@ WA_FQDN="webadaptor.localdomain"
 WA_NAME="web-adaptor"
 
 # Stop a previous instance, if any.
-docker stop ${WA_NAME}
-docker rm ${WA_NAME}
+docker stop ${WA_NAME} > /dev/null 2>&1
+docker rm ${WA_NAME} > /dev/null 2>&1
 
 echo "Docker is starting in detached mode."
 echo "Web-Adaptor URL set up is https://${WA_FQDN}/arcgis/webadaptor"
