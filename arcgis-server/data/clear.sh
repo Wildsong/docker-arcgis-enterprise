@@ -8,7 +8,7 @@ d=`dirname $0`
 p=`pwd`/$d
 for i in config-store directories; do
     target=$p/$i
-    if [ -d $target ]; then echo rm $target; rm -rf $target; fi
-    echo mkdir $target
+    if [ -d $target ]; then echo rm $i; rm -rf $target; fi
+    echo mkdir $i
     mkdir $target
 done
