@@ -1,13 +1,20 @@
 #
 #  Send a very generic request to configure a site to ArcGIS Server.
 #
-from __future__ import print_function()
+#  This returns a response almost instantly but site creation takes
+#  several minutes. You can test if from the host (you don't need
+#  to be inside the docker container to run it) but hostname
+#  has to resolve correctly. Also it probably silently fails... :-)
+#
+from __future__ import print_function
 import os
 import requests
 
+hostname = "arcgis-server"
+
 class arcgis(object):
 
-    _defaultpath = "/home/arcgis/server/usr"
+    _defaultdir = "/home/arcgis/server/usr"
 
     def __init__(self):
         return
@@ -16,6 +23,8 @@ class arcgis(object):
         
         # Form contents gleaned from ESRI ArcGIS Chef Cookbooks in Github.
 
+        log_level = "INFO"
+        
         log_settings = {
             'logLevel' : log_level,
             'logDir'   : os.path.join(self._defaultdir, "logs"),
@@ -26,25 +35,28 @@ class arcgis(object):
         form_data = {
             "username"              : user,
             "password"              : passwd,
-            "configStoreConnection" : os.path.join(self._defaultpath,"config-settings"),
-            "directories"           : os.path.join(self._defaultpath,"directories"),
+            "configStoreConnection" : os.path.join(self._defaultdir,"config-settings"),
+            "directories"           : os.path.join(self._defaultdir,"directories"),
             
             "settings" : log_settings,
             "cluster"  : "",
             "f"        : "json"
         }
 
-        uri = "https://arcgis-server.localdomain/arcgis/admin/createNewSite"
+        uri = "https://%s:6443/arcgis/admin/createNewSite" % hostname
 
         response = None
         try:
-            r = requests.post(uri,data=form_data)
+            r = requests.post(uri,data=form_data,
+                              timeout=5,
+                              verify=False # allow self-signed certificate
+            )
             print("Response", r.status_code)
         except Exception as e:
             print("Failed to create site:",e)
             return False
         
-        return true
+        return True
 
 # ------------------------------------------------------------------------
 
