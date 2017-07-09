@@ -3,3 +3,4 @@ ArcGISServer
 .git/
 *~
 data/
+venv/
