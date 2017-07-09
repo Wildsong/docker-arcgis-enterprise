@@ -1,4 +1,4 @@
-# docker-web-adaptor
+# web-adaptor
 Builds an ESRI "ArcGIS Web Adaptor" Docker image that runs on Tomcat + Ubuntu.
 
 ## The Web Adaptor
