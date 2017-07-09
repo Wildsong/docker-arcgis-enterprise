@@ -15,8 +15,14 @@ ENV HOME /home/arcgis
 # Put your license file and a downloaded copy of the server software
 # in the same folder as this Dockerfile
 ADD *.prvc ${HOME}
+
 # "ADD" knows how to unpack the tar file directly into the docker image.
 ADD ArcGIS_Server_Linux_105*.tar.gz ${HOME}
+
+# Add the script that can create the initial admin user and site
+ADD create_new_site.py ${HOME}
+RUN virtualenv venv && . venv/bin/activate && pip install requests
+
 RUN chown -R arcgis.arcgis ${HOME}
 
 # Start in the arcgis user's home directory.
