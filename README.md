@@ -24,11 +24,11 @@ requires creating a custom network.
 Use this command:
 
 ```
- sudo docker network create arcgis-network
+ sudo docker network create arcgis.net
 ```
 
 Each of the provided scripts in this repo assumes you use
-"arcgis-network" as the network name. 
+"arcgis.net" as the network name. 
 
 You only have to do this once, it hangs around in your docker engine.
 

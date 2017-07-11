@@ -26,14 +26,14 @@ docker build -t geoceg/portal-for-arcgis .
 
 Run detached (as a daemon); for convenience I keep this command in a script, "startportal":
 ```
-  docker run --name arcgis-portal \
+  docker run --name=portal --net-alias=portal \
   -d -p 7080:7080 -p 7443:7443 --net arcgis-network \
   geoceg/portal-for-arcgis
 ```
 Run interactively (and stop on exit from command shell);
 for convenience I keep this in a script, "runportal":
 ```
-  docker run --name arcgis-portal \
+  docker run --name=portal --net-alias=portal \
   -it --rm -p 7080:7080 -p 7443:7443 --net arcgis-network \
   geoceg/portal-for-arcgis bash
 ```
@@ -41,7 +41,7 @@ for convenience I keep this in a script, "runportal":
 ## How to access "Portal for ArcGIS"
 
 When Portal for ArcGIS is up and running you can access it with a web browser, 
-navigate to [https://portal.wildsong.biz:7443/arcgis/home](https://portal.wildsong.biz:7443/arcgis/home).
+navigate to [https://127.0.0.1:7443/arcgis/home](https://127.0.0.1:7443/arcgis/home).
 
 ## Files you should know about
 

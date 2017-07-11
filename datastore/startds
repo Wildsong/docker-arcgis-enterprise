@@ -10,7 +10,7 @@ docker rm ${MYNAME} > /dev/null 2>&1
 echo "Docker is starting in detached mode."
 echo "Datastore URL is https://${HOSTNAME}:2443/arcgis/datastore"
 
-docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME}  --net=arcgis-network \
+docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME}  --net=arcgis.net \
    -p 2443:2443 \
    geoceg/arcgis-datastore bash
 

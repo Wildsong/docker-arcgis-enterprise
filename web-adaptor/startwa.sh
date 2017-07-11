@@ -19,14 +19,11 @@
 # These need to be moved out to the environment.
 USER="siteadmin"
 PASS="changeit"
-
-# These are defined using "--net-alias" option when you start the respective containers.
-# See the runwa and runportal scripts for example
-WA_FQDN="web-adaptor.localdomain"
-PORTAL_FQDN="portal.localdomain"
+PORTAL_FQDN="portal.arcgis.net"
+WA_FQDN="web-adaptor.arcgis.net"
 
 echo "Is Tomcat running?"
-curl --retry 3 -sS "http://${WA_FQDN}/arcgis/webadaptor" > /tmp/apphttp
+curl --retry 3 -sS "http://127.0.0.1/arcgis/webadaptor" > /tmp/apphttp 2>&1
 if [ $? == 7 ]; then
     echo "No Tomcat! Launching.."
     authbind --deep -c bin/catalina.sh start
@@ -36,7 +33,7 @@ else
 fi
 
 echo -n "Testing HTTP on ${PORTAL_FQDN}.. "
-curl -sS "http://${PORTAL_FQDN}:7080/arcgis/home" > /tmp/portalhttp
+curl --retry 3 -sS "http://${PORTAL_FQDN}:7080/arcgis/home" > /tmp/portalhttp 2>&1
 if [ $? != 0 ]; then
     echo "HTTP Portal not reachable, start portal and re-run this."
     exit 1
@@ -45,7 +42,7 @@ else
 fi
 
 echo -n "Testing HTTPS on ${PORTAL_FQDN}.. "
-curl -sS --insecure "https://${PORTAL_FQDN}:7443/arcgis/home" > /tmp/portalhttps
+curl --retry 3 -sS --insecure "https://${PORTAL_FQDN}:7443/arcgis/home" > /tmp/portalhttps 2>&1
 if [ $? != 0 ]; then
     echo "HTTPS Portal is not reachable, start portal and re-run this."
     exit 1
@@ -55,7 +52,7 @@ fi
 
 echo -n "Testing HTTPS on ${WA_FQDN}.. "
 # Retry a few times in case tomcat is slow starting up
-curl --retry 5 -sS --insecure "https://${WA_FQDN}/arcgis/webadaptor" > /tmp/apphttps
+curl --retry 5 -sS --insecure "https://${WA_FQDN}/arcgis/webadaptor" > /tmp/apphttps 2>&1
 if [ $? != 0 ]; then
     echo "HTTPS Web Adaptor service is not running!"
     echo "Did the WAR file deploy? Look in /var/lib/${TOMCAT}/webapps for arcgis."
@@ -69,7 +66,7 @@ fi
 
 # Portal server will respond through WA if WA is already configured.
 echo -n "Checking portal registration with Web Adaptor.. "
-curl -sS --insecure "https://${WA_FQDN}/arcgis/home" > /tmp/waconfigtest
+curl --retry 3 -sS --insecure "https://${WA_FQDN}/arcgis/home" > /tmp/waconfigtest 2>&1
 if [ $? == 0 ]; then
     grep -q "Could not access any Portal machines" /tmp/waconfigtest
     if [ $? == 0 ]; then 
@@ -77,9 +74,9 @@ if [ $? == 0 ]; then
         cd arcgis/webadapt*/java/tools
         ./configurewebadaptor.sh -m portal -u ${USER} -p ${PASS} -w https://${WA_FQDN}/arcgis/webadaptor -g https://${PORTAL_FQDN}:7443
     else
-        echo "portal is already registered!"
+        echo "Portal is already registered!"
     fi
-    echo "Now try https:${WA_FQDN}/arcgis/home in a browser."
+    echo "Now try https://127.0.0.1/arcgis/home in a browser."
 else
-    echo "Could not reach Web Adaptor via ${WA_FQDN}."
+    echo "Could not reach Web Adaptor at ${WA_FQDN}."
 fi

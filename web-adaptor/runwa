@@ -12,9 +12,9 @@ docker rm ${MYNAME} > /dev/null 2>&1
 echo "Docker is starting in interactive mode."
 echo "Web-Adaptor URL is https://${HOSTNAME}/arcgis/webadaptor"
 echo "Web-Adaptor URL portal is https://${HOSTNAME}/arcgis/home"
-echo "\"./startwa.sh\" will start web adaptor and (if needed) configure it."
+echo "Start web adaptor and (if needed) configure it with \"./startwa.sh\""
 
-docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME} --net=arcgis-network \
+docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME} --net=arcgis.net \
   -p 80:80 -p 443:443 \
   geoceg/web-adaptor bash
 

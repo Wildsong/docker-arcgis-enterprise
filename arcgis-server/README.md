@@ -79,8 +79,8 @@ if there is any benefit in mounting the "directories" volume.
 Running in detached mode (as a daemon); 
 for convenience I keep this command in a script "startags":
 ```
-  docker run -d --name arcgis-server --hostname=arcgis.localdomain \
-  --net arcgis-network \
+  docker run -d --name=server --net-alias=arcgis \
+  --net arcgis.net \
   -p 6080:6080 -p 6443:6443 \
   -v `pwd`/data/config-store:/home/arcgis/server/usr \
   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
@@ -91,7 +91,7 @@ for convenience I keep this command in a script "startags":
 Once the server is up you can connect to it via bash shell
 If you have not already done so, now you can authorize the server, too.
  ```
- docker exec -it arcgis-server bash
+ docker exec -it server bash
  ```
 
 ## Troubleshooting
@@ -106,8 +106,8 @@ help you figure out what is wrong. Like this
 
 Run interactively; for convenience I keep this command in a separate script, "runags":
 ```
-  docker run -it --rm --name arcgis-server --hostname=arcgis.localdomain \
-  --net arcgis-network \
+  docker run -it --rm --name=server --net-alias=server \
+  --net arcgis.net \
   -p 6080:6080 -p 6443:6443 \
   -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \

@@ -34,7 +34,7 @@ If you are going to create dockers for a datastore and for Portal for ArcGIS,
 then you need to connect them over a docker network. Then you pass that as
 a command line in run commands.
 
- sudo docker network create arcgis-network
+ sudo docker network create arcgis.net
 
 ### Run the command
 
@@ -45,7 +45,7 @@ running in a container called "portal-for-arcgis".
 Running in detached mode (as a daemon); as a convenience there is a script called startwa:
 ```
  docker run -d --name web-adaptor \
-   -p 80:8080 -p 443:8443  --net arcgis-network \
+   -p 80:8080 -p 443:8443  --net arcgis.net \
   --link portal-for-arcgis:portal.localdomain \
    geoceg/web-adaptor
 ```
@@ -69,7 +69,7 @@ wrong.
 Run interactively; there is a script containing this called runwa:
 ```
  docker run -it --rm --name web-adaptor \
-  -p 80:8080 -p 443:8443  --net arcgis-network \
+  -p 80:8080 -p 443:8443  --net arcgis.net \
   --link portal-for-arcgis:portal.localdomain \
    geoceg/web-adaptor bash
 ```

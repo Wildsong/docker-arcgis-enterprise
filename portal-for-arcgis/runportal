@@ -2,7 +2,7 @@
 # you will have to start the server running from a command prompt.
 # NOTE: The container will stop when you exit from the shell!
 
-MYNAME="portal-for-arcgis"
+MYNAME="portal"
 HOSTNAME=`hostname`
 
 # Stop a previous instance, if any.
@@ -14,7 +14,7 @@ echo "Portal URL is https://${HOSTNAME}:7443/arcgis/home"
 echo "see also https://${HOSTNAME}:7443/arcgis/portaladmin if you get a blank home page"
 echo "The command to start Portal is portal/startportal.sh"
 
-docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME} --net=arcgis-network \
+docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME} --hostname=${MYNAME} --net=arcgis.net \
   -p 7080:7080 -p 7443:7443 \
   geoceg/portal-for-arcgis bash
 
