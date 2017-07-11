@@ -11,8 +11,8 @@ docker rm ${MYNAME} > /dev/null 2>&1
 
 echo "Docker is starting in interactive mode."
 echo "Portal URL is https://${HOSTNAME}:7443/arcgis/home"
-echo "see also https://${HOSTNAME}:7443/arcgis/portaladmin if you get a blank home page"
-echo "The command to start Portal is portal/startportal.sh"
+echo "See also https://${HOSTNAME}:7443/arcgis/portaladmin if you get a blank home page"
+echo "The command to start Portal is ./start.sh"
 
 docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME} --hostname=${MYNAME} --net=arcgis.net \
   -p 7080:7080 -p 7443:7443 \

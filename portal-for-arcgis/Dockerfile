@@ -1,6 +1,6 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-09
+ENV REFRESHED_AT 2017-07-11
 
 # Port information: http://server.arcgis.com/en/portal/latest/install/windows/ports-used-by-portal-for-arcgis.htm
 EXPOSE 7080 7443
@@ -15,6 +15,14 @@ ENV HOME=/home/arcgis
 ADD *.prvc /home/arcgis
 # "ADD" knows how to unpack the tar file directly into the docker image.
 ADD Portal_for_ArcGIS_Linux_10*.tar.gz /home/arcgis
+
+# Add the script that can create the initial admin user and site
+# I can't actually run the create_new_site.py here because it will have
+# the usual problems (server must be running already)
+ADD create_new_site.py ${HOME}
+#
+# Instead this script will run create_new_site.py..
+ADD start.sh ${HOME}
 
 # Change owner so that user "arcgis" can remove installer later.
 RUN chown -R arcgis:arcgis $HOME
@@ -32,7 +40,7 @@ ADD bashrc ./.bashrc
 #   -l yes            You agree to the License Agreement
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
 #   -d dest_dir       Default is /home/arcgis/arcgis/portal
-RUN cd PortalForArcGIS && \
+RUN whoami && cd PortalForArcGIS && \
     ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d $HOME
 RUN rm -rf PortalForArcGIS
 
@@ -41,4 +49,4 @@ RUN rm -rf PortalForArcGIS
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:7080 || exit 1
 
-CMD cd portal && ./startportal.sh && tail -f usr/arcgisportal/logs/service.log
+CMD ./start.sh && tail -f usr/arcgisportal/logs/service.log

@@ -2,11 +2,11 @@
 #  Send a very generic request to configure a site to ArcGIS Server.
 #
 #  This returns a response almost instantly but site creation takes
-#  several minutes. You can test if from the host (you don't need
+#  longer. You can test if from the host (you don't need
 #  to be inside the docker container to run it) but hostname
 #  has to resolve correctly. Also it probably silently fails... :-)
 #
-# See example:  http://server.arcgis.com/en/server/latest/administer/windows/example-create-a-site.htm
+# See example:  http://server.arcgis.com/en/server/latest/administer/linux/example-create-a-site.htm
 #
 from __future__ import print_function
 import os
