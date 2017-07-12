@@ -1,6 +1,7 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
 ENV REFRESHED_AT 2017-07-11
+ENV ESRI_VERSION 10.5.1
 
 # Port information: http://server.arcgis.com/en/portal/latest/install/windows/ports-used-by-portal-for-arcgis.htm
 EXPOSE 7080 7443
@@ -30,7 +31,8 @@ RUN chown -R arcgis:arcgis $HOME
 # Start in the arcgis user's home directory.
 WORKDIR ${HOME}
 USER arcgis
-ENV LOGNAME arcgis # ESRI uses this
+# ESRI uses LOGNAME
+ENV LOGNAME arcgis
 
 # Create a spot where the volatile content can live
 RUN mkdir -p portal/usr/arcgisportal
@@ -38,9 +40,12 @@ RUN mkdir -p portal/usr/arcgisportal
 # Change command line prompt
 ADD bashrc ./.bashrc
 
-HOSTNAME=portal
+ENV HOSTNAME portal.arcgis.net
 
-# If I defer setup/authorization until the container runs, I know it works.
+# It's okay to use the random Docker hostname at this point, but
+# we have to fix up the properties filename and we have to use
+# a proper FQDN when we configure the host. That means config has
+# to wait until we run the container.
 #
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen anyway
@@ -49,12 +54,14 @@ HOSTNAME=portal
 #   -d dest_dir       Default is /home/arcgis/arcgis/portal
 RUN cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d $HOME
 
-# I might need to rename the properties folder with the target hostname,
-# Portal is very finnicky about its name. 
-#RUN cd $HOME/portal/etc/ && mv *-config.properties ${HOSTNAME}-config.properties
+# Portal is very finnicky about its name so we fix the properties filename up now.
+# It's immutable later on after we run the container.
+RUN mv .ESRI.properties.*.${ESRI_VERSION} .ESRI.properties.${HOSTNAME}.${ESRI_VERSION}
+
+# We are done with the installer, get rid of it now.
 RUN rm -rf PortalForArcGIS
 
-# I also might need to clean out some of this folder before starting configuration
+# I will need to clean out some of this folder before starting configuration
 # so that it does not fire up the "automatic migration" mode which then fails.
 VOLUME [ "$HOME/portal/usr/arcgisportal" ]
 
