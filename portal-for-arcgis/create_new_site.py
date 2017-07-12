@@ -17,11 +17,12 @@ import json
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-hostname = "portal" # localhost would almost always work here I think, or use `hostname` command
+portal_fqdn = "portal.arcgis.net"
 
 class arcgis(object):
 
-    defaultdir = "/home/arcgis/portal"
+    # The installer gets pretty cranky if you try to relocate this
+    defaultdir = "/home/arcgis/portal/usr/arcgisportal"
 
     def __init__(self):
         return
@@ -42,24 +43,30 @@ class arcgis(object):
             "username"            : user,
             "password"            : passwd,
             "fullname"            : "Site Administrator",
-            "email"               : "brian@wildsong.biz",
-            "description"         : "Generic site addministrator account",
+            "email"               : "admin@example.com",
+            "description"         : "Administrator account created for Docker",
             "securityQuestionIdx" : 1,
             "securityQuestionAns" : "Nothing",
             "contentStore"        : content_storeJSON,
             "f" : "json"
         }
 
-        uri = "https://%s:7443/arcgis/portaladmin/createNewSite" % hostname
+        uri = "https://%s:7443/arcgis/portaladmin/createNewSite" % portal_fqdn
 
         response = None
         try:
             response = requests.post(uri, data=form_data,
-                                     timeout=30, verify=False # allow self-signed certificate
+                                     timeout=10,
+                                     verify=False # allow self-signed certificate
             )
         except Exception as e:
             print("Error:",e)
-            print("A timeout here might not mean anything. Try accessing your server.")
+            print("A timeout error is NORMAL. Configuration will take several more minutes.")
+            print("I am going to take a short nap, and when I wake up I will see if the config completed.")
+            for i in range(10:0):
+                os.sleep(5)
+                print("Zz.. %d\r" % i)
+            print("Now I should check and see if your site is properly configured.");
             return False
 
         if response.status_code != 200:
@@ -91,6 +98,5 @@ if __name__ == "__main__":
     if ag.create_site(u,p):
         print("Portal site created.")
 
-    print("https://localhost:7443/arcgis/home/")
 
 # That's all!

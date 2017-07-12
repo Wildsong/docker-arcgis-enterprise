@@ -32,21 +32,32 @@ WORKDIR ${HOME}
 USER arcgis
 ENV LOGNAME arcgis # ESRI uses this
 
+# Create a spot where the volatile content can live
+RUN mkdir -p portal/usr/arcgisportal
+
 # Change command line prompt
 ADD bashrc ./.bashrc
 
+HOSTNAME=portal
+
+# If I defer setup/authorization until the container runs, I know it works.
+#
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen anyway
 #   -l yes            You agree to the License Agreement
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
 #   -d dest_dir       Default is /home/arcgis/arcgis/portal
-RUN whoami && cd PortalForArcGIS && \
-    ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d $HOME
+RUN cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d $HOME
+
+# I might need to rename the properties folder with the target hostname,
+# Portal is very finnicky about its name. 
+#RUN cd $HOME/portal/etc/ && mv *-config.properties ${HOSTNAME}-config.properties
 RUN rm -rf PortalForArcGIS
 
-# I tried using a volume to persist setting but failed. There were apparently permission issues.
-#VOLUME [ "$HOME/portal/usr/arcgisportal/content" ]
+# I also might need to clean out some of this folder before starting configuration
+# so that it does not fire up the "automatic migration" mode which then fails.
+VOLUME [ "$HOME/portal/usr/arcgisportal" ]
 
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:7080 || exit 1
+HEALTHCHECK --interval=60s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:7080 || exit 1
 
-CMD ./start.sh && tail -f usr/arcgisportal/logs/service.log
+CMD cd /home/arcgis && ./start.sh && tail -f portal/usr/arcgisportal/logs/service.log

@@ -1,6 +1,6 @@
 From geoceg/tomcat8:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-09
+ENV REFRESHED_AT 2017-07-11
 
 EXPOSE 80 443
 
@@ -27,8 +27,7 @@ RUN cp ${HOME}/arcgis/webadaptor*/java/arcgis.war ${WEBAPPS}
 # We're done with the installer files, delete them.
 #RUN rm -rf ${HOME}/WebAdaptor
 
-# Not sure why ownership is wrong here.
-RUN chown -R ${TOMCAT}:${TOMCAT} /var/log/${TOMCAT}
+RUN chown -R ${TOMCAT}:${TOMCAT} /var/log/${TOMCAT} ${HOME}/.ESRI* ${HOME}
 
 WORKDIR ${HOME}
 

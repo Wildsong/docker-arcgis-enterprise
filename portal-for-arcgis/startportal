@@ -12,6 +12,7 @@ echo "Portal URL is https://${HOSTNAME}:7443/arcgis/home"
 echo "see also https://${HOSTNAME}:7443/arcgis/portaladmin if you get a blank home page"
 
 docker run -d --name=${MYNAME} --net-alias=${MYNAME} --net=arcgis.net --hostname=${MYNAME}\
-  -p 7080:7080 -p 7443:7443 \
-  geoceg/portal-for-arcgis
+    -p 7080:7080 -p 7443:7443 \
+    -v `pwd`/data/arcgisportal:/home/arcgis/portal/usr/arcgisportal \
+    geoceg/portal-for-arcgis
 

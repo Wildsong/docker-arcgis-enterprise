@@ -2,20 +2,26 @@
 # you will have to start the server running from a command prompt.
 # NOTE: The container will stop when you exit from the shell!
 
-MYNAME="portal"
-HOSTNAME=`hostname`
+PORTALNAME="portal"
+DOMAINNAME="arcgis.net"
+DOCKERHOST=`hostname`
 
 # Stop a previous instance, if any.
-docker stop ${MYNAME} > /dev/null 2>&1
-docker rm ${MYNAME} > /dev/null 2>&1
+docker stop ${PORTALNAME} > /dev/null 2>&1
+docker rm ${PORTALNAME} > /dev/null 2>&1
 
 echo "Docker is starting in interactive mode."
-echo "Portal URL is https://${HOSTNAME}:7443/arcgis/home"
-echo "See also https://${HOSTNAME}:7443/arcgis/portaladmin if you get a blank home page"
+echo "You must install now, "
+echo "cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -a /home/arcgis/*.prvc -d /home/arcgis"
+echo ""
+echo "Portal URL is https://${DOCKERHOST}:7443/arcgis/home"
+echo "See also https://${DOCKERHOST}:7443/arcgis/portaladmin if you get a blank home page"
 echo "The command to start Portal is ./start.sh"
 
-docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME} --hostname=${MYNAME} --net=arcgis.net \
-  -p 7080:7080 -p 7443:7443 \
-  geoceg/portal-for-arcgis bash
+docker run -it --rm --name=${PORTALNAME} --net-alias=${PORTALNAME} \
+    --hostname=${PORTALNAME}.${DOMAINNAME} --net=${DOMAINNAME} \
+    -p 7080:7080 -p 7443:7443 \
+    -v `pwd`/data/arcgisportal:/home/arcgis/portal/usr/arcgisportal \
+    geoceg/portal-for-arcgis bash
 
-echo "${MYNAME} docker removed."
+echo "\"${PORTALNAME}\" docker removed."

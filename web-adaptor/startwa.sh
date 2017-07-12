@@ -22,6 +22,7 @@ PASS="changeit"
 PORTAL_FQDN="portal.arcgis.net"
 WA_FQDN="web-adaptor.arcgis.net"
 
+
 echo "Is Tomcat running?"
 curl --retry 3 -sS "http://127.0.0.1/arcgis/webadaptor" > /tmp/apphttp 2>&1
 if [ $? == 7 ]; then
@@ -29,7 +30,7 @@ if [ $? == 7 ]; then
     authbind --deep -c bin/catalina.sh start
     sleep 3
 else
-    echo "Yes - Tomcat is running."
+    echo "Tomcat is running!"
 fi
 
 echo -n "Testing HTTP on ${PORTAL_FQDN}.. "
@@ -65,7 +66,7 @@ fi
 # test the registration and configure Web Adaptor if it's needed.
 
 # Portal server will respond through WA if WA is already configured.
-echo -n "Checking portal registration with Web Adaptor.. "
+echo -n "Checking portal registration with Web Adaptor.."
 curl --retry 3 -sS --insecure "https://${WA_FQDN}/arcgis/home" > /tmp/waconfigtest 2>&1
 if [ $? == 0 ]; then
     grep -q "Could not access any Portal machines" /tmp/waconfigtest
@@ -80,3 +81,5 @@ if [ $? == 0 ]; then
 else
     echo "Could not reach Web Adaptor at ${WA_FQDN}."
 fi
+
+tail -f /var/log/tomcat8/catalina.out

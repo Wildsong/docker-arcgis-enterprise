@@ -22,6 +22,20 @@ Now that you have added the proprietary files you can build an image,
 docker build -t geoceg/portal-for-arcgis .
 ```
 
+## TROUBLES from the log file, after trying to configure:
+
+<Msg time="2017-07-12T01:56:06,793" type="SEVERE" code="209024"
+source="Portal Admin" process="23147" thread="14" methodName=""
+machine="PORTAL" user="" elapsed="">The process of creating a new site
+failed. Reverting site
+creation. com.esri.arcgis.portal.admin.core.PortalException:
+com.esri.arcgis.portal.admin.core.PortalException:
+com.esri.arcgis.portal.admin.core.PortalException:
+java.io.FileNotFoundException:
+/home/arcgis/portal/content/items/portal/portal-config.properties (No
+such file or directory)</Msg>
+
+
 ## Run the container 
 
 Run detached (as a daemon); for convenience I keep this command in a script, "startportal":
@@ -47,8 +61,10 @@ navigate to [https://127.0.0.1:7443/arcgis/home](https://127.0.0.1:7443/arcgis/h
 
 Content: /home/arcgis/portal/usr/arcgisportal/content
 
-ESRI.properties file path: /home/arcgis/.ESRI.properties.portal.wildsong.biz.10.5.1
-After installing it contains:
+ESRI.properties file path: /home/arcgis/.ESRI.properties.portal.10.5.1
+where "portal" is the current hostname
+
+After installation it contains something like this:
 ```
  #Sun Jul 02 22:36:51 UTC 2017
  Z_REAL_VERSION=10.5.1

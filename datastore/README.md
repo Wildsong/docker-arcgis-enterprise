@@ -32,3 +32,38 @@ I had to open the ArcGIS Server Manager (on port 6443)
 go to "Site" tab
 select "Data Store" in the sidebar
 and select and delete the data store there
+
+## Backends
+
+You have to have a database running to function as the DBMS backend,
+it is the "data store" used by Data Store.
+
+### PostgreSQL
+
+### Microsoft SQL Server
+
+Strangely enough Microsoft supports a Docker, read about it:
+https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-setup-docker
+
+Download the container image
+```
+  docker pull microsoft/mssql-server-linux
+```
+
+Launch the SQL server and persist its data
+```
+  docker run -d -e "ACCEPT_EULA=Y" --name=mssql -e "SA_PASSWORD=${MSSQL_PASSWORD}" \
+  	 -p 1433:1433 \
+  	 -v `pwd`/data/mssql:/var/opt/mssql \
+  	 microsoft/mssql-server-linux
+```
+
+Connect to the server
+```
+  docker exec -it mssql bash
+```
+
+Run some commands in bash shell
+```
+  /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${SA_PASSWORD}
+'```
