@@ -12,6 +12,7 @@ cd ${HOME}
 #./server/tools/authorizeSoftware -s
 
 # Clean out the content folder so we don't go into "upgrade" mode.
+echo "Clearing out previous data"
 cd portal/usr/arcgisportal/
 rm -rf content/* db dsdata index pgsql* sql
 cd ~
