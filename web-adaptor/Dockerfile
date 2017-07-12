@@ -1,6 +1,6 @@
 From geoceg/tomcat8:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-11
+ENV REFRESHED_AT 2017-07-12
 
 EXPOSE 80 443
 
@@ -11,6 +11,9 @@ EXPOSE 80 443
 # Tomcat's home directory is in /usr/share so it's not owned by tomcat.
 # That means the next steps require root privileges.
 USER root
+
+ENV WA_NAME web-adaptor.arcgis.net
+ENV PORTAL_NAME portal.arcgis.net
 
 # "ADD" knows how to unpack the tar file directly into the Docker image.
 ADD Web_Adaptor_Java_Linux_*.tar.gz ${HOME}
@@ -29,6 +32,9 @@ RUN cp ${HOME}/arcgis/webadaptor*/java/arcgis.war ${WEBAPPS}
 
 RUN chown -R ${TOMCAT}:${TOMCAT} /var/log/${TOMCAT} ${HOME}/.ESRI* ${HOME}
 
+# I wonder what I have to rename here?
+# RUN mv .ESRI.proper...
+
 WORKDIR ${HOME}
 
 # Change command line prompt
@@ -38,9 +44,9 @@ ADD bashrc .bashrc
 USER ${TOMCAT}
 
 # Add a script that can start web adaptor and configure it
-ADD startwa.sh .
+ADD start.sh .
 
 # FIXME There is a web adaptor health URL, I should wedge that in here
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1 || exit 1
 
-CMD ./startwa.sh && tail -f /var/log/${TOMCAT}/catalina.out
+CMD ./start.sh && tail -f /var/log/${TOMCAT}/catalina.out

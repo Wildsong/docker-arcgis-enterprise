@@ -19,9 +19,10 @@
 # These need to be moved out to the environment.
 USER="siteadmin"
 PASS="changeit"
-PORTAL_FQDN="portal.arcgis.net"
-WA_FQDN="web-adaptor.arcgis.net"
 
+# I need WA_NAME and PORTAL_NAME from the environment (in the
+# Dockerfile) and the (probably) won't work unless they are fully
+# qualified domain names.
 
 echo "Is Tomcat running?"
 curl --retry 3 -sS "http://127.0.0.1/arcgis/webadaptor" > /tmp/apphttp 2>&1
@@ -33,8 +34,8 @@ else
     echo "Tomcat is running!"
 fi
 
-echo -n "Testing HTTP on ${PORTAL_FQDN}.. "
-curl --retry 3 -sS "http://${PORTAL_FQDN}:7080/arcgis/home" > /tmp/portalhttp 2>&1
+echo -n "Testing HTTP on ${PORTAL_NAME}.. "
+curl --retry 3 -sS "http://${PORTAL_NAME}:7080/arcgis/home" > /tmp/portalhttp 2>&1
 if [ $? != 0 ]; then
     echo "HTTP Portal not reachable, start portal and re-run this."
     exit 1
@@ -42,8 +43,8 @@ else
     echo "ok!"
 fi
 
-echo -n "Testing HTTPS on ${PORTAL_FQDN}.. "
-curl --retry 3 -sS --insecure "https://${PORTAL_FQDN}:7443/arcgis/home" > /tmp/portalhttps 2>&1
+echo -n "Testing HTTPS on ${PORTAL_NAME}.. "
+curl --retry 3 -sS --insecure "https://${PORTAL_NAME}:7443/arcgis/home" > /tmp/portalhttps 2>&1
 if [ $? != 0 ]; then
     echo "HTTPS Portal is not reachable, start portal and re-run this."
     exit 1
@@ -51,9 +52,9 @@ else
     echo "ok!"
 fi
 
-echo -n "Testing HTTPS on ${WA_FQDN}.. "
+echo -n "Testing HTTPS on ${WA_NAME}.. "
 # Retry a few times in case tomcat is slow starting up
-curl --retry 5 -sS --insecure "https://${WA_FQDN}/arcgis/webadaptor" > /tmp/apphttps 2>&1
+curl --retry 5 -sS --insecure "https://${WA_NAME}/arcgis/webadaptor" > /tmp/apphttps 2>&1
 if [ $? != 0 ]; then
     echo "HTTPS Web Adaptor service is not running!"
     echo "Did the WAR file deploy? Look in /var/lib/${TOMCAT}/webapps for arcgis."
@@ -67,19 +68,19 @@ fi
 
 # Portal server will respond through WA if WA is already configured.
 echo -n "Checking portal registration with Web Adaptor.."
-curl --retry 3 -sS --insecure "https://${WA_FQDN}/arcgis/home" > /tmp/waconfigtest 2>&1
+curl --retry 3 -sS --insecure "https://${WA_NAME}/arcgis/home" > /tmp/waconfigtest 2>&1
 if [ $? == 0 ]; then
     grep -q "Could not access any Portal machines" /tmp/waconfigtest
     if [ $? == 0 ]; then 
-        echo "attempting to register Portal ${PORTAL_FQDN}..."
+        echo "attempting to register Portal ${PORTAL_NAME}..."
         cd arcgis/webadapt*/java/tools
-        ./configurewebadaptor.sh -m portal -u ${USER} -p ${PASS} -w https://${WA_FQDN}/arcgis/webadaptor -g https://${PORTAL_FQDN}:7443
+        ./configurewebadaptor.sh -m portal -u ${USER} -p ${PASS} -w https://${WA_NAME}/arcgis/webadaptor -g https://${PORTAL_NAME}:7443
     else
         echo "Portal is already registered!"
     fi
     echo "Now try https://127.0.0.1/arcgis/home in a browser."
 else
-    echo "Could not reach Web Adaptor at ${WA_FQDN}."
+    echo "Could not reach Web Adaptor at ${WA_NAME}."
 fi
 
 tail -f /var/log/tomcat8/catalina.out
