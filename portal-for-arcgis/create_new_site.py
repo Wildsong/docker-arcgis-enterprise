@@ -72,7 +72,7 @@ class arcgis(object):
         form_data = {
             "username"            : user,
             "password"            : passwd,
-            "fullname"            : "Site Administrator",
+            "fullname"            : "Geo-CEG Docker",
             "email"               : "admin@example.com",
             "description"         : "Administrator account created for Docker",
             "securityQuestionIdx" : 1,
