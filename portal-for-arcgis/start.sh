@@ -6,6 +6,10 @@
 HOSTNAME=`hostname`
 cd ${HOME}
 
+# Our hostname is different than when we built this container image,
+# fix up the name of our properties file
+ln -s .ESRI.properties.*.${ESRI_VERSION} .ESRI.properties.${HOSTNAME}.${ESRI_VERSION}
+
 # This would probably be a good place to put code to authorize a
 # license file if you have not done that already
 # Check status first

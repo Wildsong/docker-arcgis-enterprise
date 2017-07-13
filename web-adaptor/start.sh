@@ -21,14 +21,14 @@ USER="siteadmin"
 PASS="changeit"
 
 # I need WA_NAME and PORTAL_NAME from the environment (in the
-# Dockerfile) and the (probably) won't work unless they are fully
-# qualified domain names.
+# Dockerfile) and due to the miracle of inconsistency if they
+# are FQDN's they won't work. Portal has to be a simple hostname
 
 echo "Is Tomcat running?"
 curl --retry 3 -sS "http://127.0.0.1/arcgis/webadaptor" > /tmp/apphttp 2>&1
 if [ $? == 7 ]; then
     echo "No Tomcat! Launching.."
-    authbind --deep -c bin/catalina.sh start
+    authbind --deep -c ${CATALINA_HOME}/bin/catalina.sh start
     sleep 3
 else
     echo "Tomcat is running!"

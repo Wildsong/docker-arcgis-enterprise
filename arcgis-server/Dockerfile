@@ -1,6 +1,6 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-09
+ENV REFRESHED_AT 2017-07-12
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -57,4 +57,4 @@ ADD bashrc ./.bashrc
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:6080 || exit 1
 
 # Command that will be run by default when you do "docker run" 
-CMD ./startags.sh && tail -f ./server/framework/etc/service_error.log
+CMD ./start.sh && tail -f ./server/framework/etc/service_error.log

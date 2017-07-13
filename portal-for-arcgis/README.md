@@ -52,6 +52,23 @@ for convenience I keep this in a script, "runportal":
   geoceg/portal-for-arcgis bash
 ```
 
+## Wait for configuration
+
+After launching the site you need to wait for the configuration script to complete.
+
+If you hit the portal site with your browser before it is done configuring itself,
+you will probably get the page that says "Create or Join a Portal".
+
+Watch what is happening by tailing the newest log file in
+data/arcgisportal/logs/PORTAL.ARCGIS.NET/portal/ (the exact name of
+the file changes on every start)
+
+The last thing Portal does in the config process is restart itself, so the message will be similar to this:
+
+```
+<Msg time="2017-07-12T21:15:15,134" type="WARNING" code="217064" source="Portal" process="29" thread="1" methodName="" machine="PORTAL.ARCGIS.NET" user="" elapsed="">The web server was found to be stopped. Re-starting it.</Msg>
+```
+
 ## How to access "Portal for ArcGIS"
 
 When Portal for ArcGIS is up and running you can access it with a web browser, 

@@ -1,6 +1,6 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-11
+ENV REFRESHED_AT 2017-07-12
 ENV ESRI_VERSION 10.5.1
 
 # Port information: http://server.arcgis.com/en/portal/latest/install/windows/ports-used-by-portal-for-arcgis.htm
@@ -53,10 +53,6 @@ ENV HOSTNAME portal.arcgis.net
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
 #   -d dest_dir       Default is /home/arcgis/arcgis/portal
 RUN cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d $HOME
-
-# Portal is very finnicky about its name so we fix the properties filename up now.
-# It's immutable later on after we run the container.
-RUN mv .ESRI.properties.*.${ESRI_VERSION} .ESRI.properties.${HOSTNAME}.${ESRI_VERSION}
 
 # We are done with the installer, get rid of it now.
 RUN rm -rf PortalForArcGIS

@@ -57,6 +57,42 @@ Once the server is up you can connect to it via bash shell if you want.
 When running in detached mode, the "startwa.sh" script inside the container will run
 automatically and it will configure Web Adaptor to connect to your Portal.
 
+### DNS NAME LOOKUPS HAVE TO WORK!!!
+
+Let me say that again.
+
+DNS NAME LOOKUPS HAVE TO WORK.
+
+Everything goes just fine until your web adaptor configures itself and
+then cannot find the portal.  Then everything just FAILS.
+
+So far the only thing I have done that will make this work is to make
+sure that you have a domain name server running that web-adaptor can
+reach that resolves "portal.arcgis.net" to an address.
+
+I hacked around this problem. I promise that I will fix it eventually
+but my goal is to get ArcGIS operational, not to make this Docker
+project perfect.
+
+My understanding is that the docker engine should be handling resolution here,
+I can "ping" for example and it comes up with the right answer, but the
+web adaptor app is bypassing the docker resolver and going out to Bellman (my DNS).
+So I have to learn why, maybe tomorrow?
+
+For the moment, I was already running a copy of dnsmasq on my own server.
+So all I had to do was figure out what the ip address was for portal and then
+create an entry in the dnsmasq server /etc/hosts file, and restart it.
+
+This is what it took for me, in /etc/hosts
+```
+172.19.0.3	portal portal.arcgis.net
+```
+and then after adding that,
+```
+sudo systemctl restart dnsmasq
+```
+and now I have a working Web Adaptor.
+
 ### Troubleshooting
 
 If you are having problems, (for example the docker command starts and
@@ -77,6 +113,24 @@ Run interactively; there is a script containing this called runwa:
 There is a script inside the container called startwa.sh, you have to run it
 manually in interactive mode. It starts Tomcat and Web Adaptor and then
 configures Web Adaptor so that it can find the Portal.
+
+### Troubleshooting network
+
+There will be a virtual network bridge, do "ifconfig" in your docker host to see the possibilities. It will start with "br"
+In my case, "iifconfig |grep ^br" returns
+```
+br-4bd88be9c4e2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+```
+Then I can watch all traffic flowing on the bridge with
+```
+sudo tcpdump -i br-4bd88be9c4e2
+```
+Watching DNS lookups is how I figured out the importance of the resolver issue. Here is one such,
+
+```
+14:45:56.061931 IP web-adaptor.wildsong.biz.48698 > bellman.wildsong.biz.domain: 46886+ A? PORTAL.ARCGIS.NET. (35)
+14:45:56.062178 IP bellman.wildsong.biz.domain > web-adaptor.wildsong.biz.48698: 46886* 1/0/0 A 172.19.0.3 (51)
+```
 
 # Files you should know about
 

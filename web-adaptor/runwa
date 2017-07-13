@@ -19,5 +19,3 @@ docker run -it --rm --name=${WA_NAME} --net-alias=${WA_NAME} \
   --hostname=${WA_NAME}.${DOMAINNAME} --net=arcgis.net \
   -p 80:80 -p 443:443 \
   geoceg/web-adaptor bash
-
-echo "${WA_NAME} docker removed."
