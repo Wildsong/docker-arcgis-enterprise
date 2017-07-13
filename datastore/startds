@@ -1,17 +1,17 @@
 # Docker command to start ArcGIS Datastore container in detached mode.
 
-MYNAME="datastore"
-HOSTNAME=`hostname`
+DATASTORE_NAME="datastore"
+DOCKER_HOST=`hostname`
 
 # Stop a previous instance, if any.
-docker stop ${MYNAME} > /dev/null 2>&1
-docker rm ${MYNAME} > /dev/null 2>&1
+docker stop ${DATASTORE_NAME} > /dev/null 2>&1
+docker rm ${DATASTORE_NAME} > /dev/null 2>&1
 
 echo "Docker is starting in detached mode."
-echo "Datastore URL is https://${HOSTNAME}:2443/arcgis/datastore"
+echo "Datastore URL is https://${DOCKER_HOST}:2443/arcgis/datastore"
 
-docker run -it --rm --name=${MYNAME} --net-alias=${MYNAME}  --net=arcgis.net \
-   -p 2443:2443 \
-   geoceg/arcgis-datastore bash
+docker run -d --name=${DATASTORE_NAME} \
+    --net-alias=${DATASTORE_NAME}  --net=arcgis.net \
+    -p 2443:2443 \
+    geoceg/arcgis-datastore bash
 
-echo "${MYNAME} docker removed."

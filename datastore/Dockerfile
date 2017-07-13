@@ -1,6 +1,7 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-09
+ENV REFRESHED_AT 2017-07-12
+ENV ESRI_VERSION 10.5.1
 
 EXPOSE 2443 
 # If you are not using a Docker network to connect containers
@@ -9,6 +10,7 @@ EXPOSE 2443
 
 # "ADD" knows how to unpack the tar file directly into the docker image.
 ADD ArcGIS_DataStore_Linux_105*.tar.gz ${HOME}
+
 # Change owner so that arcgis can rm later.
 RUN chown -R arcgis:arcgis ${HOME}
 
@@ -38,5 +40,8 @@ RUN rm -rf ${HOME}/ArcGISDataStore_Linux
 # Persist ArcGIS Server's data on the host's file system. Make sure these are writable.
 #VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", "${HOME}/server/usr/logs", "${HOME}/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen"]
 
+ADD start.sh .
+
 # Command that will be run by default when you do "docker run"
-CMD ./datastore/startdatastore.sh && tail -f ~/datastore/framework/etc/service_error.log
+CMD ./start.sh && tail -f ~/datastore/framework/etc/service_error.log
+
