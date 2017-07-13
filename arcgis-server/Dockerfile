@@ -25,7 +25,7 @@ ADD ArcGIS_Server_Linux_105*.tar.gz ${HOME}
 ADD create_new_site.py ${HOME}
 
 # Instead this script will run create_new_site.py..
-ADD startags.sh ${HOME}
+ADD start.sh ${HOME}
 
 RUN chown -R arcgis.arcgis ${HOME}
 

@@ -98,8 +98,13 @@ class arcgis(object):
             timeout = True
 
         if timeout:
-            print("A timeout error is NORMAL. Configuration will take several more minutes to complete.")
+            print("A timeout error is NORMAL. Configuration will take several more minutes to complete. Just wait... check the URL on port 7443.")
+
+            exit(0)
+
             print("I am going to take a nap, and when I wake up I will see if the config completed.")
+
+            
             for i in range(10,0,-1):
                 print("Zz.. %2d\r" % i, end="")
                 time.sleep(3)
