@@ -17,9 +17,6 @@ RUN chown -R arcgis:arcgis ${HOME}
 USER arcgis
 WORKDIR ${HOME}
 
-# Change command line prompt
-ADD bashrc ./.bashrc
-
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen
 #   -l yes            Agree to the License Agreement
@@ -37,11 +34,19 @@ RUN cd ArcGISDataStore_Linux && ./Setup -m silent --verbose -l yes -d /home
 # http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
 RUN rm -rf ${HOME}/ArcGISDataStore_Linux
 
-# Persist ArcGIS Server's data on the host's file system. Make sure these are writable.
-#VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", "${HOME}/server/usr/logs", "${HOME}/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen"]
+ENV DS_DATADIR ${HOME}/data
 
-ADD start.sh .
+# Persist data on the host's file system. Make sure these are writable.
+VOLUME ["${DS_DATADIR}"]
+
+# Perhaps if I can set this?
+#ENV ESRI_PROP_FILE_PATH=
+
+# Change command line prompt
+ADD bashrc .bashrc
+
+# Add script to start service
+ADD start.sh start.sh
 
 # Command that will be run by default when you do "docker run"
 CMD ./start.sh && tail -f ~/datastore/framework/etc/service_error.log
-

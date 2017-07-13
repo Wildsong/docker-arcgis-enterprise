@@ -13,5 +13,6 @@ echo "Datastore URL is https://${DOCKER_HOST}:2443/arcgis/datastore"
 docker run -d --name=${DATASTORE_NAME} \
     --net-alias=${DATASTORE_NAME}  --net=arcgis.net \
     -p 2443:2443 \
-    geoceg/arcgis-datastore bash
+    -v `pwd`/data/datastore:/home/arcgis/data \
+    geoceg/datastore bash
 

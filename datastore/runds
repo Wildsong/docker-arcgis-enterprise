@@ -15,6 +15,7 @@ echo "Command to start datastore is ./start.sh"
 docker run -it --rm --name=${DATASTORE_NAME} \
     --net-alias=${DATASTORE_NAME} --net=arcgis.net \
     -p 2443:2443 \
-    geoceg/arcgis-datastore bash
+    -v `pwd`/data/datastore:/home/arcgis/data \
+    geoceg/datastore bash
 
 echo "Docker \"${DATASTORE_NAME}\" removed."
