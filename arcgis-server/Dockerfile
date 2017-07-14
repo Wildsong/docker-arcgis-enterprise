@@ -1,6 +1,6 @@
-From geoceg/ubuntu-server:latest
+From geoceg/postgresql:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-12
+ENV REFRESHED_AT 2017-07-13
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
