@@ -132,6 +132,37 @@ Watching DNS lookups is how I figured out the importance of the resolver issue. 
 14:45:56.062178 IP bellman.wildsong.biz.domain > web-adaptor.wildsong.biz.48698: 46886* 1/0/0 A 172.19.0.3 (51)
 ```
 
+## Reverse proxy
+
+I want the Web Adaptor to hide behind a proxy so that I can have one
+public site name. I put the Web Adaptor behind a proxy using nginx. I
+changed my nginx site configuration, adding this "location" block.
+
+```
+	# Always redirect arcgis to secure server
+	location /arcgis/ {
+	   proxy_pass https://dockerservername/arcgis/;
+	   proxy_set_header X-Forwarded-Host $host:$server_port;
+	   proxy_set_header X-Forwarded-Server $host;
+	   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+```
+You don't have to have a complete name for the proxy server here, just the
+machine the dockers are running on is good enough.
+
+I also added a property setting to Portal, going to the portaladmin page,
+system->properties and pasting this in:
+
+```
+{"WebContextURL":"https://outside.com/arcgis"}
+```
+
+where of course I replaced "outside.com" with my public access site name.
+
+Note your DNS has to resolve this correctly, (or you need "hairpin" set on your router).
+I use dnsmasq and just put the host in /etc/hosts on the dns server.
+
+
 # Files you should know about
 
 Look in the log file /var/log/tomcat8/catalina.out for error messages, 

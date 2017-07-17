@@ -35,12 +35,12 @@ class arcgis(object):
     def status_check(self):
         uri = "https://%s:7443/arcgis/portaladmin/Status" % hostname
 
-        form_data = {
+        parameters = {
             "f" : "json"
         }
         response = None
         try:
-            response = requests.post(uri, data=form_data,
+            response = requests.post(uri, data=parameters,
                                      timeout=2,
                                      verify=False # allow self-signed certificate
             )
@@ -69,7 +69,7 @@ class arcgis(object):
             }
         content_storeJSON = json.dumps(content_store)
 
-        form_data = {
+        parameters = {
             "username"            : user,
             "password"            : passwd,
             "fullname"            : "Geo-CEG Docker",
@@ -86,7 +86,7 @@ class arcgis(object):
         response = None
         timeout = False
         try:
-            response = requests.post(uri, data=form_data,
+            response = requests.post(uri, data=parameters,
                                      timeout=10,
                                      verify=False # allow self-signed certificate
             )

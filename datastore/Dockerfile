@@ -47,6 +47,7 @@ ADD bashrc .bashrc
 
 # Add script to start service
 ADD start.sh start.sh
+ADD federate.py federate.py
 
 # Command that will be run by default when you do "docker run"
 CMD ./start.sh && tail -f ~/datastore/framework/etc/service_error.log

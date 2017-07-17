@@ -116,6 +116,9 @@ class arcgis(object):
 
 if __name__ == "__main__":
 
+    usage()
+    exit(0)
+
     try:
         portal = sys.argv[1]
         ags = sys.argv[2]

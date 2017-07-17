@@ -40,6 +40,14 @@ it is the "data store" used by Data Store.
 
 ### PostgreSQL
 
+apt-get install postgresql-9.5
+
+From Desktop run the Create Spatial Type tool
+
+From ArcCatalog you can create a connection to a PostgreSQL database,
+then you can "Enable Enterprise Geodatabase". This will ask for an authorization file.
+It's looking for a keycodes file not a PRVC file.
+
 ### Microsoft SQL Server
 
 Strangely enough Microsoft supports a Docker, read about it:
@@ -67,3 +75,12 @@ Run some commands in bash shell
 ```
   /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${SA_PASSWORD}
 '```
+
+
+
+It looks like connecting to MSSQL will be done via the ODBC driver, because I have MSSQL 17 and that's too new for a native client.
+
+
+I am trying this one
+
+Microsoft ODBC Driver 13.1 for SQL Server (64-bit)

@@ -1,6 +1,7 @@
-From geoceg/postgresql:latest
+From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-13
+ENV REFRESHED_AT 2017-07-16
+ENV ESRI_VERSION 10.5.1
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -9,6 +10,8 @@ EXPOSE 6080 6443
 
 # Refer to ESRI docs; this expands limits for user arcgis.
 ADD limits.conf /etc/security/limits.conf
+
+RUN apt-get install -y postgresql-client-9.5
 
 ENV HOME /home/arcgis
 

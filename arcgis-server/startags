@@ -1,16 +1,18 @@
 # Docker command to start ArcGIS Server in detached mode.
 #
-AGS_NAME="server"
-DOCKER_HOST=`hostname`
+AGSNAME="server"
+DOMAINNAME="arcgis.net"
+DOCKERHOST=`hostname`
 
 # Stop a previous detached server, if any.
-docker stop ${AGS_NAME} > /dev/null 2>&1
-docker rm ${AGS_NAME} > /dev/null 2>&1
+docker stop ${AGSNAME} > /dev/null 2>&1
+docker rm ${AGSNAME} > /dev/null 2>&1
 
 echo "Docker is starting in detached mode."
-echo "Management URL is http://${DOCKER_HOST}:6080/arcgis/manager"
+echo "Management URL is http://${DOCKERHOST}:6080/arcgis/manager"
 
-docker run -d --name=${AGS_NAME} --net-alias=${AGS_NAME} --net=arcgis.net \
+docker run -d --name=${AGSNAME} --net-alias=${AGSNAME}  \
+    --hostname=${AGSNAME}.${DOMAINNAME} --net=${DOMAINNAME} \
     -p 6080:6080 -p 6443:6443 \
     -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
     -v `pwd`/data/directories:/home/arcgis/server/usr/directories \

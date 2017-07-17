@@ -72,7 +72,7 @@ curl --retry 3 -sS --insecure "https://${WA_NAME}/arcgis/home" > /tmp/waconfigte
 if [ $? == 0 ]; then
     grep -q "Could not access any Portal machines" /tmp/waconfigtest
     if [ $? == 0 ]; then 
-        echo "attempting to register Portal ${PORTAL_NAME}..."
+        echo "Attempting to register Portal ${PORTAL_NAME}..."
         cd arcgis/webadapt*/java/tools
         ./configurewebadaptor.sh -m portal -u ${USER} -p ${PASS} -w https://${WA_NAME}/arcgis/webadaptor -g https://${PORTAL_NAME}:7443
     else
