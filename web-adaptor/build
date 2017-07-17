@@ -1,1 +1,1 @@
-docker build geoceg/web-adaptor .
+docker build -t geoceg/web-adaptor .

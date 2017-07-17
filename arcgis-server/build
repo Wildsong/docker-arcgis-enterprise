@@ -1,1 +1,1 @@
-docker build geoceg/arcgis-server .
+docker build -t geoceg/arcgis-server .

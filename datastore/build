@@ -1,1 +1,1 @@
-docker build geoceg/datastore .
+docker build -t geoceg/datastore .
