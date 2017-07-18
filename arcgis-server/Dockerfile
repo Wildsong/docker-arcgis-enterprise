@@ -11,7 +11,7 @@ EXPOSE 6080 6443
 # Refer to ESRI docs; this expands limits for user arcgis.
 ADD limits.conf /etc/security/limits.conf
 
-RUN apt-get install -y postgresql-client-9.5
+RUN apt-get update && apt-get install -y postgresql-client-9.5
 
 ENV HOME /home/arcgis
 

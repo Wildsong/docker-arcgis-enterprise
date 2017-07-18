@@ -57,6 +57,11 @@ RUN cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d 
 # We are done with the installer, get rid of it now.
 RUN rm -rf PortalForArcGIS
 
+# Set path so we can run psql from bash shell
+# Note that it's listening on port 7654, so try
+# psql -h localhost -p 7654 -U siteadmin gwdb
+ENV PATH $PATH:${HOME}/portal/framework/runtime/pgsql/bin
+
 # I will need to clean out some of this folder before starting configuration
 # so that it does not fire up the "automatic migration" mode which then fails.
 VOLUME [ "$HOME/portal/usr/arcgisportal" ]

@@ -3,7 +3,7 @@
 # Required ENV settings:
 # HOSTNAME HOME ESRI_VERSION
 
-AGS="server.arcgs.net"
+AGS="server.arcgis.net"
 PORTAL="portal.arcgis.net"
 USER="siteadmin"
 PASSWD="changeit"
