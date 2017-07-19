@@ -34,7 +34,7 @@ echo "Starting ArcGIS Server"
 ./server/startserver.sh
 
 # Pause for server to start
-sleep 10
+sleep 15
 
 echo "Waiting for ArcGIS Server to start..."
 curl --retry 20 -sS --insecure "https://$HOSTNAME:6443/arcgis/manager" > /tmp/apphttp

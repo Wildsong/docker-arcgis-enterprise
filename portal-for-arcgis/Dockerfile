@@ -20,10 +20,12 @@ ADD Portal_for_ArcGIS_Linux_10*.tar.gz /home/arcgis
 # Add the script that can create the initial admin user and site
 # I can't actually run the create_new_site.py here because it will have
 # the usual problems (server must be running already)
-ADD create_new_site.py ${HOME}
-#
+ADD create_new_site.py ${HOME}/
 # Instead this script will run create_new_site.py..
 ADD start.sh ${HOME}
+
+# Script that changes a string to uppercase, because of HOSTNAME in logfiles
+ADD UPPER.py ${HOME}/
 
 # Change owner so that user "arcgis" can remove installer later.
 RUN chown -R arcgis:arcgis $HOME

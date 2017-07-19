@@ -3,6 +3,7 @@
 
 DATASTORE_NAME="datastore"
 DOCKER_HOST=`hostname`
+DOMAINNAME="arcgis.net"
 
 # Stop a previous instance, if any.
 docker stop ${DATASTORE_NAME} > /dev/null 2>&1
@@ -12,10 +13,11 @@ echo "Docker is starting in interactive mode."
 echo "Datastore URL is https://${DOCKER_HOST}:2443/arcgis/datastore"
 echo "Command to start datastore is ./start.sh"
 
-docker run -it --rm --name=${DATASTORE_NAME} \
-    --net-alias=${DATASTORE_NAME} --net=arcgis.net \
+docker run -it --rm --name=${DATASTORE_NAME} --hostname=${DATASTORE_NAME}.${DOMAINNAME} \
+    --net-alias=${DATASTORE_NAME} --net=${DOMAINNAME} \
     -p 2443:2443 \
-    -v `pwd`/data/datastore:/home/arcgis/data \
     geoceg/datastore bash
+
+#    -v `pwd`/data:/home/arcgis/datastore/usr/arcgisdatastore \
 
 echo "Docker \"${DATASTORE_NAME}\" removed."

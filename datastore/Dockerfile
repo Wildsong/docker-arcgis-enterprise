@@ -34,10 +34,18 @@ RUN cd ArcGISDataStore_Linux && ./Setup -m silent --verbose -l yes -d /home
 # http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
 RUN rm -rf ${HOME}/ArcGISDataStore_Linux
 
-ENV DS_DATADIR ${HOME}/data
+ENV DS_DATADIR ${HOME}/datastore/usr/arcgisdatastore
+ENV PGDATA ${HOME}/data/pgdata
+# see also elasticdata/ and nosqldata/
+
+# Set path so we can run psql from bash shell
+# Note that it's listening on port 7654, so try
+# psql -h localhost -p 7654 -U siteadmin gwdb
+ENV PATH $PATH:${HOME}/datastore/framework/runtime/pgsql/bin
+
 
 # Persist data on the host's file system. Make sure these are writable.
-VOLUME ["${DS_DATADIR}"]
+#VOLUME ["${DS_DATADIR}"]
 
 # Perhaps if I can set this?
 #ENV ESRI_PROP_FILE_PATH=
@@ -48,6 +56,8 @@ ADD bashrc .bashrc
 # Add script to start service
 ADD start.sh start.sh
 ADD federate.py federate.py
+# Script that changes a string to uppercase, because of HOSTNAME in logfiles
+ADD UPPER.py ${HOME}/
 
 # Command that will be run by default when you do "docker run"
 CMD ./start.sh && tail -f ~/datastore/framework/etc/service_error.log
