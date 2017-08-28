@@ -23,40 +23,43 @@ requires creating a custom network.
 
 Use this command:
 
-```
+```bash
  sudo docker network create arcgis.net
 ```
 
 Each of the provided scripts in this repo assumes you use
-"arcgis.net" as the network name. 
+"arcgis.net" as the network name.
 
 You only have to do this once, it hangs around in your docker engine.
 
 ## Build everything
 
+
 * Download archives from ESRI. Put each tar.gz file in the appropriate folder.
 * Create provisioning files for ArcGIS Server and Portal for ArcGIS and put them in their folders.
 
-### or build only what you need
+(For testing only, it is also possible to build these containers
+without the propietary ESRI files, that's what will happen on
+hub.docker.com once I get things sorted out.)
 
-It should be possible to use arcgis-server by itself if you don't need anything else.
-It should be possible to use only arcgis-server and datastore
+Run each command to build a container for the associated component. 
+Or build only the containers you need; in theory you can run server by itself, 
+or you could run server and datastore.
 
-In each folder build an image; this should work...
+Run each "build" command separately, check for errors in the output,
+fix the problems before moving on to the next. You should only need do
+this once to create a set of Docker images after downloading new
+archives or licenses.
 
-```
+Each build takes a few minutes but there will be downloads so if you
+have a slow connection it will take longer.
+
+```bash
  docker build -t geoceg/arcgis-server arcgis-server
  docker build -t geoceg/portal-for-arcgis portal-for-arcgis
  docker build -t geoceg/arcgis-datastore datastore
  docker build -t geoceg/web-adaptor web-adaptor
 ```
-
-Each build takes only a few minutes.
-
-I suggest you run each "build" command separately, check for errors in
-the output, fix the problems before moving on to the next. You should
-only need do this once to create a set of Docker images after
-downloading new archives or licenses.
 
 If you don't want to use all the components you can chdir into the
 folders you are interested in and read the README.md file there to see
@@ -64,12 +67,12 @@ how to build and run them individually.
 
 When you are done you should be able to see each image with
 
-```
+```bash
  docker images
 ```
 
 On my machine I see this
-```
+```bash
  REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
  geoceg/arcgis-datastore    latest              d8e61bbe881c        19 minutes ago      2.628 GB
  geoceg/web-adaptor         latest              a7552ece6ded        21 minutes ago      780.9 MB
