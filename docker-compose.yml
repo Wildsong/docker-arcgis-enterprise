@@ -1,0 +1,18 @@
+server:
+    build: arcgis-server
+    ports: 6080, 6443
+
+portal:
+    build: portal-for-arcgis
+    ports: 7080, 7443
+
+web-adaptor:
+    build: web-adaptor
+    ports:
+     - 80, 443
+
+datastore:
+    build: datastore
+    ports: 
+     - 9080, 9443
+
