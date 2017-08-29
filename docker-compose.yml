@@ -1,18 +1,11 @@
 server:
+    container_name: server
     build: arcgis-server
-    ports: 6080, 6443
-
-portal:
-    build: portal-for-arcgis
-    ports: 7080, 7443
-
-web-adaptor:
-    build: web-adaptor
     ports:
-     - 80, 443
-
-datastore:
-    build: datastore
-    ports: 
-     - 9080, 9443
-
+    - "6080:6080"
+    - "6443:6443"
+    volumes:
+    - data/config-store:/home/arcgis/server/usr/config-store
+    - data/directories:/home/arcgis/server/usr/directories
+    - data/logs:/home/arcgis/server/usr/logs
+    - data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen
