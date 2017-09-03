@@ -1,11 +1,59 @@
-server:
+version: '2'
+  
+services:
+  server:
     container_name: server
     build: arcgis-server
+    image: geoceg/arcgis-server
     ports:
-    - "6080:6080"
-    - "6443:6443"
+      - "6080:6080"
+      - "6443:6443"
     volumes:
-    - data/config-store:/home/arcgis/server/usr/config-store
-    - data/directories:/home/arcgis/server/usr/directories
-    - data/logs:/home/arcgis/server/usr/logs
-    - data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen
+      - "/srv/arcgis/config-store:/home/arcgis/server/usr/config-store"
+      - "/srv/arcgis/directories:/home/arcgis/server/usr/directories"
+      - "/srv/arcgis/logs:/home/arcgis/server/usr/logs"
+    networks:
+      arcgis.net:
+
+
+  portal:
+    container_name: portal
+    build: portal-for-arcgis
+    image: geoceg/portal-for-arcgis
+    ports:
+      - "7080:7080"
+      - "7443:7443"
+    volumes:
+      - /srv/arcgis/arcgisportal:/home/arcgis/portal/usr/arcgisportal
+    networks:
+      arcgis.net:
+
+    
+  web-adaptor:
+    container_name: web-adaptor
+    build: web-adaptor
+    image: geoceg/web-adaptor
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - "portal"
+      - "server"
+      - "datastore"
+    networks:
+      arcgis.net:
+
+
+  datastore:
+    container_name: datastore
+    build: datastore
+    image: geoceg/datastore
+    ports:
+      - "2443:2443"
+    networks:
+      arcgis.net:
+
+
+networks:
+  arcgis.net:
+    driver: bridge

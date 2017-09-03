@@ -48,10 +48,14 @@ RUN cd ArcGISServer && ./Setup -m silent --verbose -l yes
 # http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
 RUN rm -rf ${HOME}/ArcGISServer
 
+# Try to install a keycodes file to avoid licensing on every run
+ADD keycodes "${HOME}/server/framework/runtime/.wine/drive_c/Program\?Files/ESRI/License10.5/sysgen/"
+
 # Persist ArcGIS Server's data on the host's file system. Make sure these are writable by container.
-VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", \
-       "${HOME}/server/usr/logs", \
-       "${HOME}/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen"]
+VOLUME ["${HOME}/server/usr/config-store", \
+        "${HOME}/server/usr/directories", \
+        "${HOME}/server/usr/logs"]
+
 
 # Change command line prompt
 ADD bashrc ./.bashrc
