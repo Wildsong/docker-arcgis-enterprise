@@ -1,7 +1,7 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-16
-ENV ESRI_VERSION 10.5.1
+ENV REFRESHED_AT 2017-12-23
+ENV ESRI_VERSION 10.6
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -11,8 +11,6 @@ EXPOSE 6080 6443
 # Refer to ESRI docs; this expands limits for user arcgis.
 ADD limits.conf /etc/security/limits.conf
 
-RUN apt-get update && apt-get install -y postgresql-client-9.5
-
 ENV HOME /home/arcgis
 
 # Put your license file and a downloaded copy of the server software
@@ -20,7 +18,7 @@ ENV HOME /home/arcgis
 ADD *.prvc ${HOME}
 
 # "ADD" knows how to unpack the tar file directly into the docker image.
-ADD ArcGIS_Server_Linux_105*.tar.gz ${HOME}
+ADD ArcGIS_Server_Linux_106*.tar.gz ${HOME}
 
 # Add the script that can create the initial admin user and site
 # I can't actually run the create_new_site.py here because it will have
@@ -55,7 +53,6 @@ ADD keycodes "${HOME}/server/framework/runtime/.wine/drive_c/Program\?Files/ESRI
 VOLUME ["${HOME}/server/usr/config-store", \
         "${HOME}/server/usr/directories", \
         "${HOME}/server/usr/logs"]
-
 
 # Change command line prompt
 ADD bashrc ./.bashrc

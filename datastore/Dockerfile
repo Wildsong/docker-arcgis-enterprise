@@ -1,7 +1,7 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-12
-ENV ESRI_VERSION 10.5.1
+ENV REFRESHED_AT 2017-12-23
+ENV ESRI_VERSION 10.6
 
 EXPOSE 2443 
 # If you are not using a Docker network to connect containers
@@ -9,7 +9,7 @@ EXPOSE 2443
 # EXPOSE 9876 29080 29081 9220 9320
 
 # "ADD" knows how to unpack the tar file directly into the docker image.
-ADD ArcGIS_DataStore_Linux_105*.tar.gz ${HOME}
+ADD ArcGIS_DataStore_Linux_106*.tar.gz ${HOME}
 
 # Change owner so that arcgis can rm later.
 RUN chown -R arcgis:arcgis ${HOME}

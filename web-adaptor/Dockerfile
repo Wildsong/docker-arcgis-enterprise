@@ -1,7 +1,7 @@
 From geoceg/tomcat8:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-12
-ENV ESRI_VERSION 10.5.1
+ENV REFRESHED_AT 2017-12-23
+ENV ESRI_VERSION 10.6
 
 EXPOSE 80 443
 

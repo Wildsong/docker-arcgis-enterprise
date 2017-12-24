@@ -1,7 +1,7 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-16
-ENV ESRI_VERSION 10.5.1
+ENV REFRESHED_AT 2017-12-23
+ENV ESRI_VERSION 10.6
 
 # Port information: http://server.arcgis.com/en/portal/latest/install/windows/ports-used-by-portal-for-arcgis.htm
 EXPOSE 7080 7443
