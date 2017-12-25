@@ -16,9 +16,11 @@
 #  URLs implies it could be run from anywhere that has 
 #  access to the URLs and the user credentials.
 
-# These need to be moved out to the environment.
-USER="siteadmin"
-PASS="changeit"
+if [ "$AGS_USER" = "" -o "$AGS_PASSWORD" = "" ]
+then
+    echo "Define AGS_USER and AGS_PASSWORD in the environment and try again."
+    exit 1
+fi
 
 # I need WA_NAME and PORTAL_NAME from the environment (in the
 # Dockerfile) and due to the miracle of inconsistency if they
@@ -74,7 +76,7 @@ if [ $? == 0 ]; then
     if [ $? == 0 ]; then 
         echo "Attempting to register Portal ${PORTAL_NAME}..."
         cd arcgis/webadapt*/java/tools
-        ./configurewebadaptor.sh -m portal -u ${USER} -p ${PASS} -w https://${WA_NAME}/arcgis/webadaptor -g https://${PORTAL_NAME}:7443
+        ./configurewebadaptor.sh -m portal -u ${AGS_USER} -p ${AGS_PASSWORD} -w https://${WA_NAME}/arcgis/webadaptor -g https://${PORTAL_NAME}:7443
     else
         echo "Portal is already registered!"
     fi

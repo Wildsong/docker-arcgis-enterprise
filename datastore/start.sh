@@ -5,8 +5,13 @@
 
 AGS="server.arcgis.net"
 PORTAL="portal.arcgis.net"
-USER="siteadmin"
-PASSWD="changeit"
+
+if [ "$AGS_USER" = "" -o "$AGS_PASSWORD" = "" ]
+then
+    echo "Define AGS_USER and AGS_PASSWORD in the environment and try again."
+    exit 1
+fi
+
 
 # ESRI likes its hostname to be ALL UPPER CASE! but SOMETIMES not
 UPPERHOST=`python3 UPPER.py "$HOSTNAME"`
@@ -63,7 +68,7 @@ echo "Yep!"
 # The "relational" option means it will use its internal postgresql instance.
 # [--stores [relational][,][tileCache][,][spatiotemporal]]
 cd datastore/tools
-./configuredatastore.sh https://${AGS}:6443 ${USER} ${PASSWD} ${DS_DATADIR} --stores relational
+./configuredatastore.sh https://${AGS}:6443 ${AGS_USER} ${AGS_PASSWORD} ${DS_DATADIR} --stores relational
 ./describedatastore.sh
 
 #cd ~

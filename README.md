@@ -31,6 +31,17 @@ Each of the provided scripts in this repo assumes you use
 
 You only have to do this once, it hangs around in your docker engine.
 
+When I am building and testing everything on my Mac, I just append the addresses
+to my /etc/hosts file so that name lookups work. For example,
+
+```bash
+cat >> /etc/hosts
+127.0.0.1 portal portal.arcgis.net 
+127.0.0.1 server server.arcgis.net
+127.0.0.1 web-adaptor web-adaptor.arcgis.net
+127.0.0.1 datastore datastore.arcgis.net
+```
+
 ## Build everything
 
 * Download archives from ESRI. Put each tar.gz file in the appropriate folder.
@@ -61,22 +72,38 @@ On my machine I see this
   geoceg/arcgis-server       latest              eae45e398fac        16 minutes ago      12.39 GB
 ```
 
+## Set Default Password
+
+I set this up (well, not this exactly) in my user account, .bash_profile on a Mac, and
+it gets used in each startup script. Remember to refresh your environment before going on
+so the .bash_profile takes effect. (Normally this means starting a new shell.)
+
+```bash
+export AGS_USER="siteadmin"
+export AGS_PASSWORD="yourpasswordhere"
+```
+
 ## Run everything
 
-My intention is to start them all at once. For the moment you need to cd into each folder and issue the run command there.
-Each folder has a script. The run* script runs in interactive mode, the start* script in detached mode. So far I have
-been starting each component in interactive mode in a separate window so that I can watch what happens and can start
-and stop them independently.
+My intention is to start them all at once. For the moment, you will
+need to cd into each folder and issue the run command there.  Each
+folder has a script. The run* script runs in interactive mode, the
+start* script in detached mode. So far I have been starting each
+component in interactive mode in a separate window so that I can watch
+what happens and can start and stop them independently.
 
-So, in
-window #1, cd arcgis-server && ./runags
+So, in window #1, cd arcgis-server && ./runags
+
 window #2, cd portal-for-arcgis && ./runportal
+
 window #3, cd web-adaptor && ./runwa
+
 window #4, cd datastore && ./runds
 
-As you run each component, you will get instructions on what to do and a command prompt. For example,
-to start arcgis-server from the command prompt you will be instructed to run the start script, ./start.sh
-The session would look something like this:
+As you run each component, you will get instructions on what to do and
+a command prompt. For example, to start arcgis-server from the command
+prompt you will be instructed to run the start script, ./start.sh The
+session would look something like this:
 
 ```bash
   $ cd arcgis-server
@@ -100,11 +127,12 @@ The session would look something like this:
 At this point you should be able to bring up the server in a browser
 (use the URL printed by the script) and log into it. Default username
 is 'siteadmin' and the password is 'changeit'. You can override these
-by defining AGS_USERNAME and AGS_PASSWORD in the environment before
-you run the start.sh script.
+by defining AGS_USER and AGS_PASSWORD in the environment before
+you run the start.sh script. (Note, start.sh calls "create_new_site.py".)
 
-Open additional windows and start the other components
-(portal-for-arcgis, web-adaptor, datastore).
+Then continue to open additional (shell terminal) windows and start
+the other components in this order: portal-for-arcgis, web-adaptor,
+datastore.
 
 ## Resources
 

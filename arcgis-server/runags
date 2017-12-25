@@ -22,6 +22,7 @@ echo "Start AGS and configure it with  ./start.sh"
 # Start a new server container
 docker run -it --rm --name=${AGSNAME} --net-alias=${AGSNAME}  \
     --hostname=${AGSNAME}.${DOMAINNAME} --net=${DOMAINNAME} \
+    -e AGS_USER -e AGS_PASSWORD \
     -p 6080:6080 -p 6443:6443 \
     -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
     -v `pwd`/data/directories:/home/arcgis/server/usr/directories \

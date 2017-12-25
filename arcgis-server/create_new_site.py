@@ -100,6 +100,7 @@ if __name__ == "__main__":
     except KeyError:
         u = "siteadmin"
         p = "changeit"
+        print("Using default username and password.")
 
     ag = arcgis()
     if ag.create_site(u,p):

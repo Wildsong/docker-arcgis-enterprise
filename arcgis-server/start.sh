@@ -8,6 +8,12 @@
 
 cd $HOME
 
+if [ "$AGS_USERNAME" = "" -o "$AGS_PASSWORD" = "" ]
+then
+    echo "Define AGS_USERNAME and AGS_PASSWORD in the environment to override defaults."
+    #exit 1
+fi
+
 # Our hostname is different than when we built this container image,
 # fix up the name of our properties file
 echo My hostname is $HOSTNAME
