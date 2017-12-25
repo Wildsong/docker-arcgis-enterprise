@@ -3,6 +3,7 @@
 AGSNAME="server"
 DOMAINNAME="arcgis.net"
 DOCKERHOST=`hostname`
+AGSVERSION="10.6"
 
 # Stop a previous detached server, if any.
 docker stop ${AGSNAME} > /dev/null 2>&1
@@ -17,5 +18,5 @@ docker run -d --name=${AGSNAME} --net-alias=${AGSNAME}  \
     -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
     -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
     -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
-    -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+    -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License${AGSVERSION}/sysgen \
     geoceg/arcgis-server
