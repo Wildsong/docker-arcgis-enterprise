@@ -89,7 +89,9 @@ for convenience I keep this command in a script "startags":
   geoceg/arcgis-server
 ```
 Once the server is up you can connect to it via bash shell
-If you have not already done so, now you can authorize the server, too.
+If you have not already done so, now you can authorize the server, too. See next section "Troubleshooting"
+for specifics on authorizing.
+
  ```
  docker exec -it server bash
  ```
@@ -112,7 +114,7 @@ Run interactively; for convenience I keep this command in a separate script, "ru
   -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
   -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
-  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.6/sysgen \
    geoceg/arcgis-server bash
 ```
 At the command prompt I can start the server and then authorize the server,
@@ -124,8 +126,7 @@ that process looks like this:
  Attempting to start ArcGIS Server... Hostname change detected, updating properties...
  
  
- 
- arcgis@arcgis:~$ server/tools/authorizeSoftware -f ArcGISGISServerAdvanced_ArcGISServer_*.prvc -e <<my email address>>
+  arcgis@arcgis:~$ server/tools/authorizeSoftware -f _*.prvc -e <<my email address>>
  --------------------------------------------------------------------------
  Starting the ArcGIS Software Authorization Wizard
  
@@ -133,22 +134,22 @@ that process looks like this:
  --------------------------------------------------------------------------
  Product          Ver   ECP#           Expires 
  -------------------------------------------------
- arcsdeserver     105   ecp903823912   12-jun-2018
- highwayssvr      105   ecp903823912   12-jun-2018
- roadwayrepsvr    105   ecp903823912   12-jun-2018
- svradv           105   ecp903823912   12-jun-2018
- interopserver    105   ecp903823912   12-jun-2018
- maritimechsvr    105   ecp903823912   12-jun-2018
- jtxserver        105   ecp903823912   12-jun-2018
- prodmapserver    105   ecp903823912   12-jun-2018
- svrenterprise    105   ecp903823912   12-jun-2018
- networkserver    105   ecp903823912   12-jun-2018
- defensesvr       105   ecp903823912   12-jun-2018
- aginspiresvr     105   ecp903823912   12-jun-2018
- datareviewersvr  105   ecp903823912   12-jun-2018
- locrefserver     105   ecp903823912   12-jun-2018
- bathymetrysvr    105   ecp903823912   12-jun-2018
- svradv_4         105   ecp903823912   12-jun-2018
+ arcsdeserver     106   ecp012345678   12-jun-2018
+ highwayssvr      106   ecp012345678   12-jun-2018
+ roadwayrepsvr    106   ecp012345678   12-jun-2018
+ svradv           106   ecp012345678   12-jun-2018
+ interopserver    106   ecp012345678   12-jun-2018
+ maritimechsvr    106   ecp012345678   12-jun-2018
+ jtxserver        106   ecp012345678   12-jun-2018
+ prodmapserver    106   ecp012345678   12-jun-2018
+ svrenterprise    106   ecp012345678   12-jun-2018
+ networkserver    106   ecp012345678   12-jun-2018
+ defensesvr       106   ecp012345678   12-jun-2018
+ aginspiresvr     106   ecp012345678   12-jun-2018
+ datareviewersvr  106   ecp012345678   12-jun-2018
+ locrefserver     106   ecp012345678   12-jun-2018
+ bathymetrysvr    106   ecp012345678   12-jun-2018
+ svradv_4         106   ecp012345678   12-jun-2018
  arcgis@arcgis:~$ 
 ```
 
@@ -168,10 +169,10 @@ and only expose HTTPS on the proxy; I use nginx.
 
 ## Moving the Docker image
 
-You can't upload the image to Docker Hub because it contains licensed code.
+I don't upload the Docker image to hub.docker.com because it contains licensed code.
 
 If you want to build it on one machine to test it and then deploy to a
-server, you have some options.  You could build it all over again, you
+server, you have some alternatives.  You could build it all over again, you
 could run your own registry and copy it there and then do a "docker
 pull", or you could export the image and then copy it over to the
 server for deployment.
@@ -204,9 +205,13 @@ You should now be able to use a 'docker run' command as described earlier.
 
 # Files you should know about
 
-Where the authorization codes for software are kept.
+Here is where the authorization codes for software are kept.
 /home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen/keycodes
 
-Where the hostname is kept
+Once I have a working image, I copy the keycodes file to the local folder and then build another
+image, this one has keycodes embedded in it so I don't need to run the licensing script each
+time I spin up a server.
+
+Here is where the hostname is kept
 server/framework/postinstall.dat
 
