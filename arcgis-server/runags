@@ -13,6 +13,10 @@ docker rm ${AGSNAME} > /dev/null 2>&1
 
 echo "Docker is starting in interactive mode."
 echo "Management URL is http://${DOCKERHOST}:6080/arcgis/manager"
+
+# Try to install a keycodes file to avoid licensing on every run
+cp keycodes data/sysgen/
+
 echo "Start AGS and configure it with  ./start.sh"
 
 # Start a new server container
