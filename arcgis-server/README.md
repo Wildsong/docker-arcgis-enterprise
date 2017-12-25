@@ -85,7 +85,7 @@ for convenience I keep this command in a script "startags":
   -v `pwd`/data/config-store:/home/arcgis/server/usr \
   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
   -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
-  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.6/sysgen \
   geoceg/arcgis-server
 ```
 Once the server is up you can connect to it via bash shell
@@ -95,6 +95,11 @@ for specifics on authorizing.
  ```
  docker exec -it server bash
  ```
+
+### Next steps
+
+If you've been reading 
+[http://server.arcgis.com/en/server/latest/install/linux/arcgis-server-system-requirements.htm](ArcGIS System Requirements), then at this point you will be at "Step 5. Logging in to Manager."
 
 ## Troubleshooting
 
@@ -166,6 +171,10 @@ port you won't need to punch a hole for port 6080 in your firewall - just 6443.
 
 Another way to address the firewall issue is to put a proxy in front
 and only expose HTTPS on the proxy; I use nginx.
+
+## Resetting the password
+
+From bash command line: server/tools/passwordreset/passwordreset.sh -p <newpassword>
 
 ## Moving the Docker image
 
