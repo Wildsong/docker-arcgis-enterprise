@@ -20,7 +20,8 @@ connections.
 
 ## Versions
 
-This build process has been tested with 10.5 and 10.5.1
+This build process has been tested with 10.6.
+It worked with 10.5 and 10.5.1 but I have moved on.
 
 ## Build the Docker Image
 
@@ -40,9 +41,9 @@ to the "my.esri.com" web site, clicked the Developer tab, then clicked
 
 Now you that you have added the proprietary files in the right place
 you can build an image,
- ```
- docker build -t geoceg/arcgis-server .
- ```
+
+    docker build -t geoceg/arcgis-server .
+
 (My github repo is "geo-ceg", but Docker repo is "geoceg" (no dash).
 This is not a typo, just confusion.)
 
