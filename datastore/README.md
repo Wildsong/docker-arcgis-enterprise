@@ -4,6 +4,10 @@ Docker container for the ESRI ArcGIS Enterprise Data Store
 
 I don't have a license for the temporal data.
 
+## Build 
+
+    docker build -t geoceg/datastore .
+
 ## Web access port
 
 HTTPSweb management: port 2443

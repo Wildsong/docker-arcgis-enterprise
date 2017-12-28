@@ -18,9 +18,9 @@ then clicked "Create New Provisioning File" in the left nav bar.
 * Build 
 
 Now that you have added the proprietary files you can build an image, 
-```
-docker build -t geoceg/portal-for-arcgis .
-```
+
+    docker build -t geoceg/portal-for-arcgis .
+
 
 ## TROUBLES from the log file, after trying to configure:
 
@@ -78,13 +78,13 @@ navigate to [https://127.0.0.1:7443/arcgis/home](https://127.0.0.1:7443/arcgis/h
 
 Content: /home/arcgis/portal/usr/arcgisportal/content
 
-ESRI.properties file path: /home/arcgis/.ESRI.properties.portal.10.5.1
+ESRI.properties file path: /home/arcgis/.ESRI.properties.portal.10.6
 where "portal" is the current hostname
 
 After installation it contains something like this:
 ```
  #Sun Jul 02 22:36:51 UTC 2017
- Z_REAL_VERSION=10.5.1
+ Z_REAL_VERSION=10.6
  Z_ArcGISPortal_INSTALL_DIR=/home/arcgis/portal
  ARCLICENSEHOME=
  ESRI_PROGRAM_FILES=

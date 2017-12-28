@@ -23,9 +23,9 @@ you won't need any *.prvc file this time.
 
 Now you that you have added the proprietary file in the right place
 you can build an image,
- ```
- docker build -t geoceg/web-adaptor .
- ```
+
+    docker build -t geoceg/web-adaptor .
+
 (The github repo is "geo-ceg", but Docker repo is "geoceg". This is not a typo.)
 
 ### Create a network
@@ -34,7 +34,7 @@ If you are going to create dockers for a datastore and for Portal for ArcGIS,
 then you need to connect them over a docker network. Then you pass that as
 a command line in run commands.
 
- sudo docker network create wildsong.lan
+    docker network create wildsong.lan
 
 ### Run the command
 
@@ -43,16 +43,15 @@ find it.  The following commands and scripts assume that Portal is
 running in a container called "portal-for-arcgis".
 
 Running in detached mode (as a daemon); as a convenience there is a script called startwa:
-```
- docker run -d --name web-adaptor \
-   -p 80:8080 -p 443:8443  --net wildsong.lan \
-  --link portal-for-arcgis:portal.localdomain \
-   geoceg/web-adaptor
-```
+
+    docker run -d --name web-adaptor \
+        -p 80:8080 -p 443:8443  --net wildsong.lan \
+        --link portal-for-arcgis:portal.localdomain \
+        geoceg/web-adaptor
+
 Once the server is up you can connect to it via bash shell if you want.
- ```
- docker exec -it web-adaptor bash 
- ```
+
+    docker exec -it web-adaptor bash 
 
 When running in detached mode, the "startwa.sh" script inside the container will run
 automatically and it will configure Web Adaptor to connect to your Portal.
@@ -84,13 +83,13 @@ So all I had to do was figure out what the ip address was for portal and then
 create an entry in the dnsmasq server /etc/hosts file, and restart it.
 
 This is what it took for me, in /etc/hosts
-```
-172.19.0.3	portal portal.wildsong.lan
-```
+
+    172.19.0.3	portal portal.wildsong.lan
+
 and then after adding that,
-```
-sudo systemctl restart dnsmasq
-```
+
+    sudo systemctl restart dnsmasq
+
 and now I have a working Web Adaptor.
 
 ### Troubleshooting
@@ -103,12 +102,11 @@ messages that you see on your screen will help you figure out what is
 wrong.
 
 Run interactively; there is a script containing this called runwa:
-```
- docker run -it --rm --name web-adaptor \
-  -p 80:8080 -p 443:8443  --net wildsong.lan \
-  --link portal-for-arcgis:portal.localdomain \
-   geoceg/web-adaptor bash
-```
+
+    docker run -it --rm --name web-adaptor \
+      -p 80:8080 -p 443:8443  --net wildsong.lan \
+      --link portal-for-arcgis:portal.localdomain \
+      geoceg/web-adaptor bash
 
 There is a script inside the container called startwa.sh, you have to run it
 manually in interactive mode. It starts Tomcat and Web Adaptor and then
@@ -118,19 +116,18 @@ configures Web Adaptor so that it can find the Portal.
 
 There will be a virtual network bridge, do "ifconfig" in your docker host to see the possibilities. It will start with "br"
 In my case, "iifconfig |grep ^br" returns
-```
-br-4bd88be9c4e2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-```
+
+    br-4bd88be9c4e2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+
 Then I can watch all traffic flowing on the bridge with
-```
-sudo tcpdump -i br-4bd88be9c4e2
-```
+
+    sudo tcpdump -i br-4bd88be9c4e2
+
 Watching DNS lookups is how I figured out the importance of the resolver issue. Here is one such,
 
-```
-14:45:56.061931 IP web-adaptor.wildsong.biz.48698 > bellman.wildsong.biz.domain: 46886+ A? PORTAL.WILDSONG.LAN. (35)
-14:45:56.062178 IP bellman.wildsong.biz.domain > web-adaptor.wildsong.biz.48698: 46886* 1/0/0 A 172.19.0.3 (51)
-```
+
+    14:45:56.061931 IP web-adaptor.wildsong.biz.48698 > bellman.wildsong.biz.domain: 46886+ A? PORTAL.WILDSONG.LAN. (35)
+    14:45:56.062178 IP bellman.wildsong.biz.domain > web-adaptor.wildsong.biz.48698: 46886* 1/0/0 A 172.19.0.3 (51)
 
 ## Reverse proxy
 
@@ -138,7 +135,6 @@ I want the Web Adaptor to hide behind a proxy so that I can have one
 public site name. I put the Web Adaptor behind a proxy using nginx. I
 changed my nginx site configuration, adding this "location" block.
 
-```
 	# Always redirect arcgis to secure server
 	location /arcgis/ {
 	   proxy_pass https://dockerservername/arcgis/;
@@ -146,16 +142,14 @@ changed my nginx site configuration, adding this "location" block.
 	   proxy_set_header X-Forwarded-Server $host;
 	   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	}
-```
+
 You don't have to have a complete name for the proxy server here, just the
 machine the dockers are running on is good enough.
 
 I also added a property setting to Portal, going to the portaladmin page,
 system->properties and pasting this in:
 
-```
-{"WebContextURL":"https://outside.com/arcgis"}
-```
+    {"WebContextURL":"https://outside.com/arcgis"}
 
 where of course I replaced "outside.com" with my public access site name.
 
