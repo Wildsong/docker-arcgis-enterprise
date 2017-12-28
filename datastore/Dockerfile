@@ -43,7 +43,6 @@ ENV PGDATA ${HOME}/data/pgdata
 # psql -h localhost -p 7654 -U siteadmin gwdb
 ENV PATH $PATH:${HOME}/datastore/framework/runtime/pgsql/bin
 
-
 # Persist data on the host's file system. Make sure these are writable.
 #VOLUME ["${DS_DATADIR}"]
 

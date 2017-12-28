@@ -60,13 +60,13 @@ If you hit the portal site with your browser before it is done configuring itsel
 you will probably get the page that says "Create or Join a Portal".
 
 Watch what is happening by tailing the newest log file in
-data/arcgisportal/logs/PORTAL.ARCGIS.NET/portal/ (the exact name of
+data/arcgisportal/logs/PORTAL.WILDSONG.LAN/portal/ (the exact name of
 the file changes on every start)
 
 The last thing Portal does in the config process is restart itself, so the message will be similar to this:
 
 ```
-<Msg time="2017-07-12T21:15:15,134" type="WARNING" code="217064" source="Portal" process="29" thread="1" methodName="" machine="PORTAL.ARCGIS.NET" user="" elapsed="">The web server was found to be stopped. Re-starting it.</Msg>
+<Msg time="2017-07-12T21:15:15,134" type="WARNING" code="217064" source="Portal" process="29" thread="1" methodName="" machine="PORTAL.WILDSONG.LAN" user="" elapsed="">The web server was found to be stopped. Re-starting it.</Msg>
 ```
 
 ## How to access "Portal for ArcGIS"

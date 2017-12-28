@@ -20,10 +20,10 @@ requires creating a custom network.
 
 Use this command:
 
-    docker network create arcgis.net
+    docker network create wildsong.lan
 
 Each of the provided scripts in this repo assumes you use
-"arcgis.net" as the network name.
+"wildsong.lan" as the network name.
 
 You only have to do this once, it hangs around in your docker engine.
 
@@ -31,10 +31,12 @@ When I am building and testing everything on my Mac, I just append the addresses
 to my /etc/hosts file so that name lookups work. For example,
 
     cat >> /etc/hosts
-    127.0.0.1 portal portal.arcgis.net 
-    127.0.0.1 server server.arcgis.net
-    127.0.0.1 web-adaptor web-adaptor.arcgis.net
-    127.0.0.1 datastore datastore.arcgis.net
+    127.0.0.1 portal portal.wildsong.lan 
+    127.0.0.1 server server.wildsong.lan
+    127.0.0.1 web-adaptor web-adaptor.wildsong.lan
+    127.0.0.1 datastore datastore.wildsong.lan
+
+You don't have to use "wildsong.lan", but if you change that then change AGS_DOMAIN too, see below.
 
 ## Build everything
 
@@ -60,14 +62,17 @@ on my machine I see this:
    geoceg/portal-for-arcgis   latest              e2e69bac2ca6        5 minutes ago       9.252 GB
    geoceg/arcgis-server       latest              eae45e398fac        16 minutes ago      12.39 GB
 
-## Set Default Password
+## Set environment variables
 
-I set this up (well, not this exactly) in my user account, .bash_profile on a Mac, and
-it gets used in each startup script. Remember to refresh your environment before going on
-so the .bash_profile takes effect. (Normally this means starting a new shell.)
+You have to define three things somewhere in your environment.  I put
+them in .bash_profile on a Mac, and it gets used in each startup
+script. Remember to refresh your environment before going on so the
+.bash_profile takes effect. (Normally this means starting a new
+shell.)
 
     export AGS_USER="siteadmin"
     export AGS_PASSWORD="yourpasswordhere"
+    export AGS_DOMAIN="wildsong.lan"
 
 ## Run everything
 
@@ -95,7 +100,7 @@ session would look something like this:
     Management URL is http://laysan:6080/arcgis/manager
     Start AGS and configure it with  ./start.sh
     ArcGIS Server$ ./start.sh 
-    My hostname is server.arcgis.net
+    My hostname is server.wildsong.lan
     Removing previous site configuration files.
     Starting ArcGIS Server
     Attempting to start ArcGIS Server... Hostname change detected, updating properties...

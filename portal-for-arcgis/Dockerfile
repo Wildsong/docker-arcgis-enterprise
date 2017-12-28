@@ -42,7 +42,7 @@ RUN mkdir -p portal/usr/arcgisportal
 # Change command line prompt
 ADD bashrc ./.bashrc
 
-ENV HOSTNAME portal.arcgis.net
+ENV HOSTNAME portal.wildsong.lan
 
 # It's okay to use the random Docker hostname at this point, but
 # we have to fix up the properties filename and we have to use

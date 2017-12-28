@@ -9,8 +9,8 @@ EXPOSE 80 443
 # Put a downloaded copy of the web adaptor installer
 # in the same folder as this Dockerfile
 
-ENV WA_NAME web-adaptor.arcgis.net
-ENV PORTAL_NAME portal.arcgis.net
+ENV WA_NAME web-adaptor.wildsong.lan
+ENV PORTAL_NAME portal.wildsong.lan
 
 # NOTE that CATALINA_BASE is where the app server's files live (owned by root)
 # and that the unprivileged user (tomcat) has its own HOME (owned by tomcat).

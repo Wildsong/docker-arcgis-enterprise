@@ -11,8 +11,9 @@ echo "Docker is starting in detached mode."
 echo "Datastore URL is https://${DOCKER_HOST}:2443/arcgis/datastore"
 
 docker run -d --name=${DATASTORE_NAME} \
-    --net-alias=${DATASTORE_NAME}  --net=arcgis.net \
+    --net-alias=${DATASTORE_NAME}  --net=${AGS_DOMAIN} \
     -p 2443:2443 \
+    -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -v `pwd`/data/datastore:/home/arcgis/data \
     geoceg/datastore bash
 

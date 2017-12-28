@@ -1,7 +1,8 @@
 # Docker command to start Web Adaptor container in detached mode.
+#
+#
 
 WA_NAME="web-adaptor"
-DOMAINNAME="arcgis.net"
 DOCKERHOST=`hostname`
 
 # Stop a previous instance, if any.
@@ -13,6 +14,7 @@ echo "Web-Adaptor URL set up is https://${DOCKERHOST}/arcgis/webadaptor"
 echo "Web-Adaptor URL portal is https://${DOCKERHOST}/arcgis/home"
 
 docker run -d --name=${WA_NAME} --net-alias=${WA_NAME} \
-  --hostname=${WA_NAME}.${DOMAINNAME} --net=arcgis.net \
-   -p 80:80 -p 443:443 \
-   geoceg/web-adaptor
+    --hostname=${WA_NAME}.${AGS_DOMAIN} --net=${AGS_DOMAIN} \
+    -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
+    -p 80:80 -p 443:443 \
+    geoceg/web-adaptor

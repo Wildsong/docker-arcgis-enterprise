@@ -3,7 +3,6 @@
 # NOTE: The container will stop when you exit from the shell!
 
 WA_NAME="web-adaptor"
-DOMAINNAME="arcgis.net"
 DOCKERHOST=`hostname`
 
 # Stop a previous instance, if any.
@@ -16,8 +15,8 @@ echo "Web-Adaptor URL portal is https://${DOCKERHOST}/arcgis/home"
 echo "Start web adaptor and (if needed) configure it with \"./start.sh\""
 
 docker run -it --rm --name=${WA_NAME} --net-alias=${WA_NAME} \
-    --hostname=${WA_NAME}.${DOMAINNAME} --net=arcgis.net \
+    --hostname=${WA_NAME}.${AGS_DOMAIN} --net=${AGS_DOMAIN} \
     --link=portal --link=server \
-    -e AGS_USER -e AGS_PASSWORD \
+    -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -p 80:80 -p 443:443 \
     geoceg/web-adaptor bash

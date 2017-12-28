@@ -3,7 +3,6 @@
 # NOTE: The container will stop when you exit from the shell!
 
 AGSNAME="server"
-DOMAINNAME="arcgis.net"
 DOCKERHOST=`hostname`
 AGSVERSION="10.6"
 
@@ -21,8 +20,8 @@ echo "Start AGS and configure it with  ./start.sh"
 
 # Start a new server container
 docker run -it --rm --name=${AGSNAME} --net-alias=${AGSNAME}  \
-    --hostname=${AGSNAME}.${DOMAINNAME} --net=${DOMAINNAME} \
-    -e AGS_USER -e AGS_PASSWORD \
+    --hostname=${AGSNAME}.${AGS_DOMAIN} --net=${AGS_DOMAIN} \
+    -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -p 6080:6080 -p 6443:6443 \
     -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
     -v `pwd`/data/directories:/home/arcgis/server/usr/directories \

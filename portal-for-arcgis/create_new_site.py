@@ -20,9 +20,16 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 try:
     hostname = os.environ["HOSTNAME"]
 except KeyError:
-    print("hostname not set")
-    hostname = 'portal.arcgis.net'
+    print("HOSTNAME not set")
 
+if not hostname:
+    try:
+        hostname = "portal." + os.environ["AGS_DOMAIN"]
+        print("Setting hostname to", hostname)
+    except KeyError:
+        print("AGS_DOMAIN not set.")
+
+# ========================================================================
 
 class arcgis(object):
 
@@ -132,14 +139,14 @@ class arcgis(object):
 if __name__ == "__main__":
 
     try:
-        u = os.environ["AGS_USER"]
-        p = os.environ["AGS_PASSWORD"]
+        user = os.environ["AGS_USER"]
+        password = os.environ["AGS_PASSWORD"]
     except KeyError:
-        u = "siteadmin"
-        p = "changeit"
+        user = "siteadmin"
+        password = "changeit"
 
     ag = arcgis()
-    if ag.create_site(u,p):
+    if ag.create_site(user,password):
         print("Portal site created.")
 
 

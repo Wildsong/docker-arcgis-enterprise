@@ -34,7 +34,7 @@ If you are going to create dockers for a datastore and for Portal for ArcGIS,
 then you need to connect them over a docker network. Then you pass that as
 a command line in run commands.
 
- sudo docker network create arcgis.net
+ sudo docker network create wildsong.lan
 
 ### Run the command
 
@@ -45,7 +45,7 @@ running in a container called "portal-for-arcgis".
 Running in detached mode (as a daemon); as a convenience there is a script called startwa:
 ```
  docker run -d --name web-adaptor \
-   -p 80:8080 -p 443:8443  --net arcgis.net \
+   -p 80:8080 -p 443:8443  --net wildsong.lan \
   --link portal-for-arcgis:portal.localdomain \
    geoceg/web-adaptor
 ```
@@ -68,7 +68,7 @@ then cannot find the portal.  Then everything just FAILS.
 
 So far the only thing I have done that will make this work is to make
 sure that you have a domain name server running that web-adaptor can
-reach that resolves "portal.arcgis.net" to an address.
+reach that resolves "portal.wildsong.lan" to an address.
 
 I hacked around this problem. I promise that I will fix it eventually
 but my goal is to get ArcGIS operational, not to make this Docker
@@ -85,7 +85,7 @@ create an entry in the dnsmasq server /etc/hosts file, and restart it.
 
 This is what it took for me, in /etc/hosts
 ```
-172.19.0.3	portal portal.arcgis.net
+172.19.0.3	portal portal.wildsong.lan
 ```
 and then after adding that,
 ```
@@ -105,7 +105,7 @@ wrong.
 Run interactively; there is a script containing this called runwa:
 ```
  docker run -it --rm --name web-adaptor \
-  -p 80:8080 -p 443:8443  --net arcgis.net \
+  -p 80:8080 -p 443:8443  --net wildsong.lan \
   --link portal-for-arcgis:portal.localdomain \
    geoceg/web-adaptor bash
 ```
@@ -128,7 +128,7 @@ sudo tcpdump -i br-4bd88be9c4e2
 Watching DNS lookups is how I figured out the importance of the resolver issue. Here is one such,
 
 ```
-14:45:56.061931 IP web-adaptor.wildsong.biz.48698 > bellman.wildsong.biz.domain: 46886+ A? PORTAL.ARCGIS.NET. (35)
+14:45:56.061931 IP web-adaptor.wildsong.biz.48698 > bellman.wildsong.biz.domain: 46886+ A? PORTAL.WILDSONG.LAN. (35)
 14:45:56.062178 IP bellman.wildsong.biz.domain > web-adaptor.wildsong.biz.48698: 46886* 1/0/0 A 172.19.0.3 (51)
 ```
 

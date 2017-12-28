@@ -3,15 +3,15 @@
 # Required ENV settings:
 # HOSTNAME HOME ESRI_VERSION
 
-AGS="server.arcgis.net"
-PORTAL="portal.arcgis.net"
-
-if [ "$AGS_USER" = "" -o "$AGS_PASSWORD" = "" ]
+if [ "$AGS_USER" = "" -o "$AGS_PASSWORD" = "" -o "$AGS_DOMAIN" = "" ]
 then
-    echo "Define AGS_USER and AGS_PASSWORD in the environment and try again."
+    echo "Make sure AGS_USER, AGS_PASSWORD, and AGS_DOMAIN"
+    echo "are defined in the environment and try again."
     exit 1
 fi
 
+AGS="server.${AGS_DOMAIN}"
+PORTAL="portal.${AGS_DOMAIN}"
 
 # ESRI likes its hostname to be ALL UPPER CASE! but SOMETIMES not
 UPPERHOST=`python3 UPPER.py "$HOSTNAME"`
