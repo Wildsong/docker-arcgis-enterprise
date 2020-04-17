@@ -9,3 +9,5 @@
 
 # ignore python virtual environments
 venv/
+
+.env
