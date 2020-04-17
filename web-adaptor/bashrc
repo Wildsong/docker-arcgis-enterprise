@@ -1,2 +1,2 @@
-# Change propmt
+# Change prompt
 export PS1="WebAdaptor$ "

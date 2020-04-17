@@ -17,4 +17,4 @@ docker run -d --name=${WA_NAME} --net-alias=${WA_NAME} \
     --hostname=${WA_NAME}.${AGS_DOMAIN} --net=${AGS_DOMAIN} \
     -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -p 80:80 -p 443:443 \
-    geoceg/web-adaptor
+    web-adaptor

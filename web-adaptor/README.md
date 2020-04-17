@@ -11,6 +11,13 @@ and connect the services over network connections.
 Web Adaptor is pretty useless without either ArcGIS Server or Portal for ArcGIS.
 Build and start those first, then come back here.
 
+Current requirements for 10.8 (the ones used chosen for use in this image):
+Apache Tomcat 8.5.35 (sticking with 8 for now since it works at 10.7 too)
+Ubuntu Server LTS 18.04.3
+
+Esri says that I could use CentOS 7, but that has an older Tomcat release,
+and CentOS 8 does not have Tomcat at all. So I am sticking with Ubuntu.
+
 ## Build the Docker Image
 
 You need to have a file downloaded from ESRI to build this docker image.
@@ -21,12 +28,10 @@ this will be a file with a name like Web_Adaptor_Java_Linux_1051_156442.tar.gz
 This component does not require any special licensing so unlike Server and Portal,
 you won't need any *.prvc file this time.
 
-Now you that you have added the proprietary file in the right place
+Once you that you have added the proprietary file in the right place
 you can build an image,
 
-    docker build -t geoceg/web-adaptor .
-
-(The github repo is "geo-ceg", but Docker repo is "geoceg". This is not a typo.)
+    docker build -t web-adaptor .
 
 ### Create a network
 
@@ -42,12 +47,13 @@ You have to start "Portal For ArcGIS" first so that Web Adaptor can
 find it.  The following commands and scripts assume that Portal is
 running in a container called "portal-for-arcgis".
 
-Running in detached mode (as a daemon); as a convenience there is a script called startwa:
+Running in detached mode (as a daemon); as a convenience there is a
+script called "startwa":
 
     docker run -d --name web-adaptor \
         -p 80:8080 -p 443:8443  --net wildsong.lan \
         --link portal-for-arcgis:portal.localdomain \
-        geoceg/web-adaptor
+        web-adaptor
 
 Once the server is up you can connect to it via bash shell if you want.
 
@@ -106,7 +112,7 @@ Run interactively; there is a script containing this called runwa:
     docker run -it --rm --name web-adaptor \
       -p 80:8080 -p 443:8443  --net wildsong.lan \
       --link portal-for-arcgis:portal.localdomain \
-      geoceg/web-adaptor bash
+      web-adaptor bash
 
 There is a script inside the container called startwa.sh, you have to run it
 manually in interactive mode. It starts Tomcat and Web Adaptor and then
@@ -156,11 +162,9 @@ where of course I replaced "outside.com" with my public access site name.
 Note your DNS has to resolve this correctly, (or you need "hairpin" set on your router).
 I use dnsmasq and just put the host in /etc/hosts on the dns server.
 
-
 # Files you should know about
 
 Look in the log file /var/log/tomcat8/catalina.out for error messages, 
 they can be very detailed and helpful.
 
-See also geo-ceg/docker-tomcat8 for more information.
 
