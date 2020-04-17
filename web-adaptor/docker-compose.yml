@@ -1,0 +1,27 @@
+#
+#  This docker-compose.yml file is for testing the image
+#  and also for deploying web-adaptors when the portal
+#  and server components are deployed somewhere else.
+#  In my case, that means they are running on a Windows server.
+#
+version: '3.6'
+  
+services:
+  web-adaptor:
+    container_name: web-adaptor
+    build:
+        context: .
+        dockerfile: Dockerfile
+    image: web-adaptor
+    env_file: .env
+    environment:
+        WA_NAME: ${WA_NAME}
+        PORTAL_NAME: ${PORTAL_NAME}
+        AGS_USER: ${AGS_USER}
+        AGS_PASSWORD: ${AGS_PASSWORD}
+        AGS_DOMAIN: ${AGS_DOMAIN}
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    network_mode: "host"
+
