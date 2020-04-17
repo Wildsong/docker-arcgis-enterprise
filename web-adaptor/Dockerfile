@@ -12,6 +12,7 @@ ENV RELEASE=bionic
 # "bionic" is currently the latest Ubuntu LTS (Long Term Support) release.
 
 RUN apt-get update && apt-get -y install apt-utils locales
+RUN apt-get -y install iputils-ping curl
 
 # Set up the locale. 
 RUN locale-gen en_US.UTF-8
@@ -28,6 +29,7 @@ RUN apt-get install -y openjdk-8-jre-headless tomcat8
 # put a downloaded copy of the web adaptor installer
 # in the same folder as this Dockerfile
 
+# You can override these in docker-compose.yml
 ENV WA_NAME web-adaptor.wildsong.lan
 ENV PORTAL_NAME portal.wildsong.lan
 
