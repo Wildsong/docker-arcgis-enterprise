@@ -1,0 +1,4 @@
+start.sh text eol=lf
+bashrc text eol=lf
+check_portal.py text eol=lf
+
