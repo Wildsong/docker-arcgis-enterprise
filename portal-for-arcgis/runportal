@@ -22,6 +22,6 @@ docker run -it --rm --name=${PORTALNAME} --net-alias=${PORTALNAME} \
     -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -p 7080:7080 -p 7443:7443 \
     -v `pwd`/data/arcgisportal:/home/arcgis/portal/usr/arcgisportal \
-    geoceg/portal-for-arcgis bash
+    wildsong/portal-for-arcgis bash
 
 echo "\"${PORTALNAME}\" docker removed."

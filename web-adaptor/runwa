@@ -19,4 +19,4 @@ docker run -it --rm --name=${WA_NAME} --net-alias=${WA_NAME} \
     --link=portal --link=server \
     -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -p 80:80 -p 443:443 \
-    geoceg/web-adaptor bash
+    wildsong/web-adaptor bash

@@ -19,7 +19,7 @@ then clicked "Create New Provisioning File" in the left nav bar.
 
 Now that you have added the proprietary files you can build an image, 
 
-    docker build -t geoceg/portal-for-arcgis .
+    docker build -t wildsong/portal-for-arcgis .
 
 
 ## TROUBLES from the log file, after trying to configure:
@@ -42,14 +42,14 @@ Run detached (as a daemon); for convenience I keep this command in a script, "st
 ```
   docker run --name=portal --net-alias=portal \
   -d -p 7080:7080 -p 7443:7443 --net arcgis-network \
-  geoceg/portal-for-arcgis
+  wildsong/portal-for-arcgis
 ```
 Run interactively (and stop on exit from command shell);
 for convenience I keep this in a script, "runportal":
 ```
   docker run --name=portal --net-alias=portal \
   -it --rm -p 7080:7080 -p 7443:7443 --net arcgis-network \
-  geoceg/portal-for-arcgis bash
+  wildsong/portal-for-arcgis bash
 ```
 
 ## Wait for configuration

@@ -19,4 +19,4 @@ docker run -d --name=${AGSNAME} --net-alias=${AGSNAME}  \
     -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
     -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
     -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License${AGSVERSION}/sysgen \
-    geoceg/arcgis-server
+    wildsong/arcgis-server

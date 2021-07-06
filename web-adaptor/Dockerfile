@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="brian@wildsong.biz"
 ENV REFRESHED_AT 2020-04-17
 

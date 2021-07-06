@@ -42,10 +42,7 @@ to the "my.esri.com" web site, clicked the Developer tab, then clicked
 Now you that you have added the proprietary files in the right place
 you can build an image,
 
-    docker build -t geoceg/arcgis-server .
-
-(My github repo is "geo-ceg", but Docker repo is "geoceg" (no dash).
-This is not a typo, just confusion.)
+    docker build -t wildsong/arcgis-server .
 
 At the end of the build it will something similar to this
 
@@ -87,7 +84,7 @@ for convenience I keep this command in a script "startags":
   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
   -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
   -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.6/sysgen \
-  geoceg/arcgis-server
+  wildsong/arcgis-server
 ```
 Once the server is up you can connect to it via bash shell
 If you have not already done so, now you can authorize the server, too. See next section "Troubleshooting"
@@ -121,7 +118,7 @@ Run interactively; for convenience I keep this command in a separate script, "ru
   -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
   -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
   -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.6/sysgen \
-   geoceg/arcgis-server bash
+   wildsong/arcgis-server bash
 ```
 At the command prompt I can start the server and then authorize the server,
 that process looks like this:
@@ -194,7 +191,7 @@ On the development machine, you can use the repo name (arcgis-server)
 or the id from 'docker images' command.
 
  docker images
- docker save -o arcgis-server.tar geoceg/arcgis-server
+ docker save -o arcgis-server.tar wildsong/arcgis-server
 
 This makes for a big file, around 11 GB. You could compress it if you
 want. Compressing takes a long time, then you have to decompress it

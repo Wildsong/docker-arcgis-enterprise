@@ -4,7 +4,7 @@ services:
   server:
     container_name: server
     build: arcgis-server
-    image: geoceg/arcgis-server
+    image: wildsong/arcgis-server
     ports:
       - "6080:6080"
       - "6443:6443"
@@ -19,7 +19,7 @@ services:
   portal:
     container_name: portal
     build: portal-for-arcgis
-    image: geoceg/portal-for-arcgis
+    image: wildsong/portal-for-arcgis
     ports:
       - "7080:7080"
       - "7443:7443"
@@ -32,7 +32,7 @@ services:
   web-adaptor:
     container_name: web-adaptor
     build: web-adaptor
-    image: geoceg/web-adaptor
+    image: wildsong/web-adaptor
     ports:
       - "80:80"
       - "443:443"
@@ -47,7 +47,7 @@ services:
   datastore:
     container_name: datastore
     build: datastore
-    image: geoceg/datastore
+    image: wildsong/datastore
     ports:
       - "2443:2443"
     networks:

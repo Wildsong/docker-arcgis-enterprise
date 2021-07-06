@@ -1,7 +1,31 @@
 # docker-arcgis-enterprise
-A set of dockers for ESRI Arcgis Enterprise
+A set of dockers for ESRI ArcGIS Enterprise
 
-Make sure you check the wiki, https://github.com/Geo-CEG/docker-arcgis-enterprise/wiki
+## History
+
+06 July 2021
+
+**This project is not being actively developed at this time.**
+
+*In 2017, I paid for an Esri development license and worked on
+putting ArcGIS Enterprise into Docker. I pretty much had it working when
+two things happened, (1) I got a day job and (2) the license ran out.
+
+I did this work as a Geo-CEG project, a non-profit that no longer exists. I just
+walked through all the project files and changed references to Geo-CEG to Wildsong.
+
+If I had a license I'd continue to develop it but I am not willing to pay right now.
+If you want me to do more work on it and you have a developer license, drop me a line.
+
+After glancing over the code today, the next thing I'd be doing is converting from
+Docker to Docker Swarm. Esri chose to use Kubernetes instead of Swarm, for my purposes
+Kubernetes is overkill. Sort of like using Windows Server when Linux would work... :-)
+
+--Brian*
+
+## Overview
+
+Make sure you check the wiki, https://github.com/Wildsong/docker-arcgis-enterprise/wiki
 
 There were 4 separate github repos for this project, they have been combined
 into one repo for all four dockers.
@@ -57,10 +81,10 @@ When you are done you should be able to see each image with the command "docker 
 on my machine I see this:
 
    REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
-   geoceg/datastore           latest              2b61b9429659        2 minutes ago       2.835 GB
-   geoceg/web-adaptor         latest              ab34fd0cdea5        4 minutes ago       1.156 GB
-   geoceg/portal-for-arcgis   latest              e2e69bac2ca6        5 minutes ago       9.252 GB
-   geoceg/arcgis-server       latest              eae45e398fac        16 minutes ago      12.39 GB
+   wildsong/datastore         latest              2b61b9429659        2 minutes ago       2.835 GB
+   wildsong/web-adaptor       latest              ab34fd0cdea5        4 minutes ago       1.156 GB
+   wildsong/portal-for-arcgis latest              e2e69bac2ca6        5 minutes ago       9.252 GB
+   wildsong/arcgis-server     latest              eae45e398fac        16 minutes ago      12.39 GB
 
 ## Set environment variables
 

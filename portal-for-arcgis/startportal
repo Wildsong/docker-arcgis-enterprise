@@ -16,5 +16,5 @@ docker run -d --name=${PORTALNAME} --net-alias=${PORTALNAME} \
     -p 7080:7080 -p 7443:7443 \
     -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -v `pwd`/data/arcgisportal:/home/arcgis/portal/usr/arcgisportal \
-    geoceg/portal-for-arcgis
+    wildsong/portal-for-arcgis
 

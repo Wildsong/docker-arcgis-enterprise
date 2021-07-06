@@ -6,7 +6,7 @@ I don't have a license for the temporal data.
 
 ## Build 
 
-    docker build -t geoceg/datastore .
+    docker build -t wildsong/datastore .
 
 ## Web access port
 

@@ -16,7 +16,7 @@ docker run -it --rm --name=${DATASTORE_NAME} --hostname=${DATASTORE_NAME}.${AGS_
     --net-alias=${DATASTORE_NAME} --net=${AGS_DOMAIN} \
     -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
     -p 2443:2443 \
-    geoceg/datastore bash
+    wildsong/datastore bash
 
 #    -v `pwd`/data:/home/arcgis/datastore/usr/arcgisdatastore \
 

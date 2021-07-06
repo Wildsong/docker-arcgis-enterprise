@@ -1,6 +1,6 @@
-From geoceg/ubuntu-server:latest
-LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-12-27
+From wildsong/ubuntu-server:latest
+LABEL maintainer="brian@wildsong.biz"
+ENV REFRESHED_AT 2021-07-06
 ENV ESRI_VERSION 10.6
 
 EXPOSE 2443 
