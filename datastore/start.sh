@@ -3,15 +3,14 @@
 # Required ENV settings:
 # HOSTNAME HOME ESRI_VERSION
 
-if [ "$AGS_USER" = "" -o "$AGS_PASSWORD" = "" -o "$AGS_DOMAIN" = "" ]
+if [ "$AGE_USER" = "" -o "$AGE_PASSWORD" = "" -o "$AGE_SERVER" = "" -o "$AGE_PORTAL" = "" ]
 then
-    echo "Make sure AGS_USER, AGS_PASSWORD, and AGS_DOMAIN"
+    echo "Make sure AGE_USER, AGE_PASSWORD, AGE_SERVER, and AGE_PORTAL"
     echo "are defined in the environment and try again."
     exit 1
 fi
 
-AGS="server.${AGS_DOMAIN}"
-PORTAL="portal.${AGS_DOMAIN}"
+PORTAL="portal.${AGE_PORTAL}"
 
 # ESRI likes its hostname to be ALL UPPER CASE! but SOMETIMES not
 UPPERHOST=`python3 UPPER.py "$HOSTNAME"`
@@ -46,15 +45,6 @@ fi
 export LOGFILE="${HOME}/datastore/usr/logs/$UPPERHOST/server/*.log"
 echo "Logfile is $LOGFILE"
 
-echo ""
-echo -n "Do we have an ArcGIS Server named \"${AGS}\"? "
-curl --retry 15 -sS --insecure "https://${AGS}:6443/" > /tmp/agshttps
-if [ $? != 0 ]; then
-    echo "No? Nothing to do here! $?"
-    exit 1
-fi
-echo "Yep!"
-
 echo -n "Is the Datastore server \"${HOSTNAME}\" ready? "
 curl --retry 15 -sS --insecure "https://${HOSTNAME}:2443/" > /tmp/dshttp
 if [ $? != 0 ]; then
@@ -67,11 +57,11 @@ echo "Yep!"
 # This will create the various and sundry files in the VOLUME "data"
 # The "relational" option means it will use its internal postgresql instance.
 # [--stores [relational][,][tileCache][,][spatiotemporal]]
-cd datastore/tools
-./configuredatastore.sh https://${AGS}:6443 ${AGS_USER} ${AGS_PASSWORD} ${DS_DATADIR} --stores relational
-./describedatastore.sh
+#cd datastore/tools
+#./configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USER} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational
+#./describedatastore.sh
 
 #cd ~
-#python3 federate.py $PORTAL $AGS
+#python3 federate.py $AGE_PORTAL $AGE_SERVER
 
 exit 0
