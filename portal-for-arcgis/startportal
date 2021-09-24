@@ -14,7 +14,7 @@ echo "see also https://${DOCKERHOST}:7443/arcgis/portaladmin if you get a blank 
 docker run -d --name=${PORTALNAME} --net-alias=${PORTALNAME} \
     --hostname=${PORTALNAME}.${AGS_DOMAIN} --net=${AGS_DOMAIN} \
     -p 7080:7080 -p 7443:7443 \
-    -e AGS_USER -e AGS_PASSWORD -e AGS_DOMAIN \
+    -e AGE_USER -e AGE_PASSWORD -e AGS_DOMAIN \
     -v `pwd`/data/arcgisportal:/home/arcgis/portal/usr/arcgisportal \
     wildsong/portal-for-arcgis
 

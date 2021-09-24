@@ -95,8 +95,8 @@ class arcgis(object):
 if __name__ == "__main__":
 
     try:
-        u = os.environ["AGS_USER"]
-        p = os.environ["AGS_PASSWORD"]
+        u = os.environ["AGE_USER"]
+        p = os.environ["AGE_PASSWORD"]
     except KeyError:
         u = "siteadmin"
         p = "changeit"

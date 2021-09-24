@@ -1,7 +1,7 @@
 From wildsong/ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2021-07-06
-ENV ESRI_VERSION 10.6
+ENV REFRESHED_AT 2021-09-23
+ENV ESRI_VERSION 10.9
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -13,12 +13,8 @@ ADD limits.conf /etc/security/limits.conf
 
 ENV HOME /home/arcgis
 
-# Put your license file and a downloaded copy of the server software
-# in the same folder as this Dockerfile
-ADD *.prvc ${HOME}
-
 # "ADD" knows how to unpack the tar file directly into the docker image.
-ADD ArcGIS_Server_Linux_106*.tar.gz ${HOME}
+ADD ArcGIS_Server_Linux_109*.tar.gz ${HOME}
 
 # Add the script that can create the initial admin user and site
 # I can't actually run the create_new_site.py here because it will have
@@ -27,6 +23,10 @@ ADD create_new_site.py ${HOME}
 
 # Instead this script will run create_new_site.py..
 ADD start.sh ${HOME}
+
+# Put your license file and a downloaded copy of the server software
+# in the same folder as this Dockerfile
+ADD *.prvc ${HOME}
 
 RUN chown -R arcgis.arcgis ${HOME}
 
@@ -45,11 +45,6 @@ RUN cd ArcGISServer && ./Setup -m silent --verbose -l yes
 # If you are a developer you might want to leave it to get access to diagnostics, see
 # http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
 RUN rm -rf ${HOME}/ArcGISServer
-
-# Persist ArcGIS Server's data on the host's file system. Make sure these are writable by container.
-VOLUME ["${HOME}/server/usr/config-store", \
-        "${HOME}/server/usr/directories", \
-        "${HOME}/server/usr/logs"]
 
 # Change command line prompt
 ADD bashrc ./.bashrc

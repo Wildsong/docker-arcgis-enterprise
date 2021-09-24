@@ -12,16 +12,10 @@ Be sure you remain in compliance with your ESRI licenses; if you are
 licensed for only one copy of ArcGIS Server, you should stop the test
 container before starting another copy on a different machine.
 
-In keeping with the Docker concept, there will be only one service
-"ArcGIS Server" installed in the image built here. To run additional
-services such as Portal for ArcGIS or Microsoft SQL Server, then you
-run more Docker commands and connect the services over network
-connections.
-
 ## Versions
 
-This build process has been tested with 10.6.
-It worked with 10.5 and 10.5.1 but I have moved on.
+This build process has been tested with 10.9.
+It worked with 10.6 and 10.5 but I moved on.
 
 ## Build the Docker Image
 
@@ -47,7 +41,7 @@ you can build an image,
 At the end of the build it will something similar to this
 
 ```
-ArcGIS for Server is NOT authorized. You will need to run /home/arcgis/server/tools/authorizeSoftware before using ArcGIS Server 10.5.
+ArcGIS for Server is NOT authorized. You will need to run /home/arcgis/server/tools/authorizeSoftware before using ArcGIS Server 10.9.
 
 You will be able to access ArcGIS Server Manager by navigating to http://abff9e7e2995:6080/arcgis/manager.
 ```
@@ -74,21 +68,9 @@ across sessions. Mounting the "logs" folder makes it possible to check
 the log files without having to connect to the container. I am not sure
 if there is any benefit in mounting the "directories" volume.
 
-Running in detached mode (as a daemon); 
-for convenience I keep this command in a script "startags":
-```
-  docker run -d --name=server --net-alias=arcgis \
-  --net wildsong.lan \
-  -p 6080:6080 -p 6443:6443 \
-  -v `pwd`/data/config-store:/home/arcgis/server/usr \
-  -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
-  -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
-  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.6/sysgen \
-  wildsong/arcgis-server
-```
-Once the server is up you can connect to it via bash shell
-If you have not already done so, now you can authorize the server, too. See next section "Troubleshooting"
-for specifics on authorizing.
+Once the server is up you can connect to it via bash shell If you have
+not already done so, now you can authorize the server, too. See next
+section "Troubleshooting" for specifics on authorizing.
 
  ```
  docker exec -it server bash
@@ -109,16 +91,6 @@ at the set up, and manually launch the server with the command
 "server/startserver.sh". The messages that you see on your screen will
 help you figure out what is wrong. Like this
 
-Run interactively; for convenience I keep this command in a separate script, "runags":
-```
-  docker run -it --rm --name=server --net-alias=server \
-  --net wildsong.lan \
-  -p 6080:6080 -p 6443:6443 \
-  -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
-  -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
-  -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
-  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.6/sysgen \
-   wildsong/arcgis-server bash
 ```
 At the command prompt I can start the server and then authorize the server,
 that process looks like this:

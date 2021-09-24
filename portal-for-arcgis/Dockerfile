@@ -1,7 +1,7 @@
 From wildsong/ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2021-07-06
-ENV ESRI_VERSION 10.6
+ENV REFRESHED_AT 2021-09-23
+ENV ESRI_VERSION 10.9
 
 # Port information: http://server.arcgis.com/en/portal/latest/install/windows/ports-used-by-portal-for-arcgis.htm
 EXPOSE 7080 7443
@@ -11,11 +11,8 @@ ADD limits.conf /etc/security/limits.conf
 
 ENV HOME /home/arcgis
 
-# Put your license file and a downloaded copy of the server software
-# in the same folder as this Dockerfile
-ADD *.prvc /home/arcgis
 # "ADD" knows how to unpack the tar file directly into the docker image.
-ADD Portal_for_ArcGIS_Linux_10*.tar.gz /home/arcgis
+ADD Portal_for_ArcGIS_Linux_109*.tar.gz /home/arcgis
 
 # Add the script that can create the initial admin user and site
 # I can't actually run the create_new_site.py here because it will have
@@ -29,6 +26,10 @@ ADD UPPER.py ${HOME}/
 
 # Change owner so that user "arcgis" can remove installer later.
 RUN chown -R arcgis:arcgis $HOME
+
+# Put your license file and a downloaded copy of the server software
+# in the same folder as this Dockerfile
+ADD *.prvc /home/arcgis
 
 # Start in the arcgis user's home directory.
 WORKDIR ${HOME}
@@ -54,19 +55,20 @@ ENV HOSTNAME portal.wildsong.lan
 #   -l yes            You agree to the License Agreement
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
 #   -d dest_dir       Default is /home/arcgis/arcgis/portal
-RUN cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -a $HOME/*.prvc -d $HOME
+RUN cd PortalForArcGIS && ./Setup -m silent --verbose -l yes -d $HOME
 
 # We are done with the installer, get rid of it now.
 RUN rm -rf PortalForArcGIS
+
+# Put your license file and a downloaded copy of the server software
+# in the same folder as this Dockerfile
+ADD *.prvc /home/arcgis
 
 # Set path so we can run psql from bash shell
 # Note that it's listening on port 7654, so try
 # psql -h localhost -p 7654 -U siteadmin gwdb
 ENV PATH $PATH:${HOME}/portal/framework/runtime/pgsql/bin
 
-# I will need to clean out some of this folder before starting configuration
-# so that it does not fire up the "automatic migration" mode which then fails.
-VOLUME [ "$HOME/portal/usr/arcgisportal" ]
 
 HEALTHCHECK --interval=60s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:7080 || exit 1
 
