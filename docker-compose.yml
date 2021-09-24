@@ -8,13 +8,6 @@ volumes:
   server_logs:
     name: arcgis_server_logs
 
-portal_data:
-    name: arcgis_portal_data
-
-  datastore_data:
-    name: arcgis_datastore_data
-  
-  
 services:
   server:
     container_name: server
@@ -39,7 +32,7 @@ services:
       - "7080:7080"
       - "7443:7443"
     volumes:
-      - portal_data:/home/arcgis/portal/usr/arcgisportal
+      - ./arcgis/portal:/home/arcgis/portal/usr/arcgisportal
     networks:
       arcgis.net:
 
@@ -69,7 +62,7 @@ services:
       - "9876:9876"
     volumes:
     # both data and logs will be here
-      - datastore_data:/home/arcgis/datastore
+      - ./arcgis/datastore:/home/arcgis/datastore
     networks:
       arcgis.net:
 
