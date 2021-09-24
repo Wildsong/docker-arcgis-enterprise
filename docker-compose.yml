@@ -7,14 +7,12 @@ volumes:
     name: arcgis_server_config
   server_logs:
     name: arcgis_server_logs
-  portal_data:
+
+portal_data:
     name: arcgis_portal_data
-  portal_logs:
-    name: arcgis_portal_logs
+
   datastore_data:
     name: arcgis_datastore_data
-  datastore_logs:
-    name: arcgis_datastore_logs
   
   
 services:
@@ -70,7 +68,8 @@ services:
       - "2443:2443"
       - "9876:9876"
     volumes:
-      - datastore_data:/home/arcgis/arcgisdatastore
+    # both data and logs will be here
+      - datastore_data:/home/arcgis/datastore
     networks:
       arcgis.net:
 
