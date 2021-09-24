@@ -8,11 +8,13 @@ I don't have a license for the temporal data so I don't address it,
 
     docker build -t wildsong/datastore .
 
-## Web access port
+## Ports
+
+### Web access port
 
 HTTPSweb management: port 2443
 
-## Data store ports
+### Data store ports
 
 Relational data store: port 9876.
 

@@ -3,16 +3,9 @@ A set of dockers for ESRI ArcGIS Enterprise
 
 ## History
 
-06 July 2021
-
-**This project is not being actively developed at this time.**
-
 *In 2017, I paid for an Esri development license and worked on
 putting ArcGIS Enterprise into Docker. I pretty much had it working when
 two things happened, (1) I got a day job and (2) the license ran out.
-
-I did this work as a Geo-CEG project, a non-profit that no longer exists. I just
-walked through all the project files and changed references to Geo-CEG to Wildsong.
 
 If I had a license I'd continue to develop it but I am not willing to pay right now.
 If you want me to do more work on it and you have a developer license, drop me a line.
@@ -88,62 +81,37 @@ on my machine I see this:
 
 ## Set environment variables
 
-You have to define three things somewhere in your environment.  I put
-them in .bash_profile on a Mac, and it gets used in each startup
-script. Remember to refresh your environment before going on so the
-.bash_profile takes effect. (Normally this means starting a new
-shell.)
-
-    export AGS_USER="siteadmin"
-    export AGS_PASSWORD="yourpasswordhere"
-    export AGS_DOMAIN="wildsong.lan"
+Copy the sample.env file to .env and edit it.
 
 ## Run everything
 
-My intention is to start them all at once. For the moment, you will
-need to cd into each folder and issue the run command there.  Each
-folder has a script. The run* script runs in interactive mode, the
-start* script in detached mode. So far I have been starting each
-component in interactive mode in a separate window so that I can watch
-what happens and can start and stop them independently.
+I'm using docker-compose, so you should be able to start (in theory) everything with
 
-So, in
+```bash
+docker-compose up -d
+```
+
+and they will be running in background because of the -d.
+
+2021-09-23 Currently I'm only working on Datastore, so I do
+
+```bash
+docker-compose up datastore
+```
+
+This starts only the datastore and leave it running in foreground so
+I can watch the log messages.
+
+
+My intention is to start them all at once but I don't have a license right now.
+
+I used to start each component separately like this, so I could watch all the startup messages,
+
 * window #1, cd arcgis-server && ./runags
 * window #2, cd portal-for-arcgis && ./runportal
 * window #3, cd web-adaptor && ./runwa
 * window #4, cd datastore && ./runds
 
-As you run each component, you will get instructions on what to do and
-a command prompt. For example, to start arcgis-server from the command
-prompt you will be instructed to run the start script, ./start.sh The
-session would look something like this:
-
-    $ cd arcgis-server
-    $ ./runags 
-    Docker is starting in interactive mode.
-    Management URL is http://laysan:6080/arcgis/manager
-    Start AGS and configure it with  ./start.sh
-    ArcGIS Server$ ./start.sh 
-    My hostname is server.wildsong.lan
-    Removing previous site configuration files.
-    Starting ArcGIS Server
-    Attempting to start ArcGIS Server... Hostname change detected, updating properties...
-    
-    
-    Waiting for ArcGIS Server to start...
-    Yes; configuring default site.
-    Error: HTTPSConnectionPool(host='server', port=6443): Read timed out. (read timeout=30)
-    A timeout here might not mean anything. Try accessing your server.
-
-At this point you should be able to bring up the server in a browser
-(use the URL printed by the script) and log into it. Default username
-is 'siteadmin' and the password is 'changeit'. As stated above you can override these
-by defining AGS_USER and AGS_PASSWORD in the environment before
-you run the start.sh script. (Note, start.sh calls the script "create_new_site.py".)
-
-Then continue to open additional (shell terminal) windows and start
-the other components in this order: portal-for-arcgis, web-adaptor,
-datastore.
 
 ## Resources
 
