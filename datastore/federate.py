@@ -127,8 +127,8 @@ if __name__ == "__main__":
         exit(1)
 
     try:
-        u = os.environ["AGS_USER"]
-        p = os.environ["AGS_PASSWORD"]
+        u = os.environ["AGE_USER"]
+        p = os.environ["AGE_PASSWORD"]
     except KeyError:
         u = "siteadmin"
         p = "changeit"
