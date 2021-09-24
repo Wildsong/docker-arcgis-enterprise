@@ -50,6 +50,7 @@ services:
     image: wildsong/datastore
     ports:
       - "2443:2443"
+      - "9876:9876"
     networks:
       arcgis.net:
 

@@ -1,7 +1,7 @@
 From wildsong/ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2021-07-06
-ENV ESRI_VERSION 10.6
+ENV REFRESHED_AT 2021-09-23
+ENV ESRI_VERSION 10.9
 
 EXPOSE 2443 
 # If you are not using a Docker network to connect containers
@@ -9,7 +9,7 @@ EXPOSE 2443
 # EXPOSE 9876 29080 29081 9220 9320
 
 # "ADD" knows how to unpack the tar file directly into the docker image.
-ADD ArcGIS_DataStore_Linux_106*.tar.gz ${HOME}
+ADD ArcGIS_DataStore_Linux_109*.tar.gz ${HOME}
 
 # Change owner so that arcgis can rm later.
 RUN chown -R arcgis:arcgis ${HOME}
