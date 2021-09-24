@@ -2,7 +2,7 @@
 
 Docker container for the ESRI ArcGIS Enterprise Data Store
 
-I don't have a license for the temporal data.
+I don't have a license for the temporal data so I don't address it,
 
 ## Build 
 
@@ -55,4 +55,19 @@ From Desktop run the Create Spatial Type tool
 From ArcCatalog you can create a connection to a PostgreSQL database,
 then you can "Enable Enterprise Geodatabase". This will ask for an authorization file.
 It's looking for a keycodes file, not a PRVC file.
+
+## Changes
+
+I used to try to configure the datastore in the start.sh script,
+and also to federate.
+
+That meant the datastore had to wait for the server to start.
+
+It also meant I could not use the unconfigured datastore to restore a backup from a working datastore on
+another machine to test the restore process. That's what I am doing today.
+
+Hence all that is commented out in start.sh now.
+You have to do those steps manually now.
+
+
 
