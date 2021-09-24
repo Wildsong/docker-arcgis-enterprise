@@ -1,4 +1,21 @@
 version: '3.6'
+
+volumes:
+  server_data:
+    name: arcgis_server_data
+  server_config:
+    name: arcgis_server_config
+  server_logs:
+    name: arcgis_server_logs
+  portal_data:
+    name: arcgis_portal_data
+  portal_logs:
+    name: arcgis_portal_logs
+  datastore_data:
+    name: arcgis_datastore_data
+  datastore_logs:
+    name: arcgis_datastore_logs
+  
   
 services:
   server:
@@ -9,9 +26,9 @@ services:
       - "6080:6080"
       - "6443:6443"
     volumes:
-      - "/srv/arcgis/config-store:/home/arcgis/server/usr/config-store"
-      - "/srv/arcgis/directories:/home/arcgis/server/usr/directories"
-      - "/srv/arcgis/logs:/home/arcgis/server/usr/logs"
+      - server_config:/home/arcgis/server/usr/config-store
+      - server_data:/home/arcgis/server/usr/directories"
+      - server_logs:/home/arcgis/server/usr/logs"
     networks:
       arcgis.net:
 
@@ -24,7 +41,7 @@ services:
       - "7080:7080"
       - "7443:7443"
     volumes:
-      - /srv/arcgis/arcgisportal:/home/arcgis/portal/usr/arcgisportal
+      - portal_data:/home/arcgis/portal/usr/arcgisportal
     networks:
       arcgis.net:
 
@@ -52,6 +69,8 @@ services:
     ports:
       - "2443:2443"
       - "9876:9876"
+    volumes:
+      - datastore_data:/home/arcgis/arcgisdatastore
     networks:
       arcgis.net:
 
