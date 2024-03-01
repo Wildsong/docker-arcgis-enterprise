@@ -1,0 +1,72 @@
+version: '3.6'
+
+volumes:
+  server_data:
+    name: arcgis_server_data
+  server_config:
+    name: arcgis_server_config
+  server_logs:
+    name: arcgis_server_logs
+
+services:
+  server:
+    container_name: server
+    build: arcgis-server
+    image: wildsong/arcgis-server
+    ports:
+      - "6080:6080"
+      - "6443:6443"
+    volumes:
+      - server_config:/home/arcgis/server/usr/config-store
+      - server_data:/home/arcgis/server/usr/directories"
+      - server_logs:/home/arcgis/server/usr/logs"
+    networks:
+      arcgis.net:
+
+
+  portal:
+    container_name: portal
+    build: portal-for-arcgis
+    image: wildsong/portal-for-arcgis
+    ports:
+      - "7080:7080"
+      - "7443:7443"
+    volumes:
+      - ./arcgis/portal:/home/arcgis/portal/usr/arcgisportal
+    networks:
+      arcgis.net:
+
+    
+  web-adaptor:
+    container_name: web-adaptor
+    build: web-adaptor
+    image: wildsong/web-adaptor
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - "portal"
+      - "server"
+      - "datastore"
+    networks:
+      arcgis.net:
+
+
+  datastore:
+    container_name: datastore
+    build: datastore
+    image: wildsong/datastore
+    env_file: .env
+    ports:
+      - "2443:2443"
+      - "9876:9876"
+    volumes:
+    # both data and logs will be here
+      - ./arcgis/datastore:/home/arcgis/datastore
+    networks:
+      arcgis.net:
+
+
+networks:
+  arcgis.net:
+    driver: bridge
