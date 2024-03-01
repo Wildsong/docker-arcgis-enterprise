@@ -8,21 +8,19 @@ https://server.arcgis.com/en/server/latest/administer/linux/inside-an-arcgis-ser
 This procedure facilitates my testing with an ESRI Developer license. I can
 quickly spin up a copy of ArcGIS Server on a local machine and test ideas.
 
-Be sure you remain in compliance with your ESRI licenses; if you are
-licensed for only one copy of ArcGIS Server, you should stop the test
-container before starting another copy on a different machine.
+Be sure you remain in compliance with your ESRI licenses.
 
 ## Versions
 
-This build process has been tested with 10.9.
-It worked with 10.6 and 10.5 but I moved on.
+This build process is currently set up for 11.2.
+It was developed using 10.9, 10.6 and 10.5 but I don't have resources to test all those.
 
 ## Build the Docker Image
 
 You need to have two files downloaded from ESRI to build this docker image.
 
 * Put the Linux installer downloaded from ESRI into the same file with Dockerfile;
-this will be a file with a name like ArcGIS_Server_Linux_105_154052.tar.gz.
+this will be a file with a name like ArcGIS_Server_Linux_112_188327.tar.gz.
 
 * Create a provisioning file for ArcGIS Server in your ESRI dashboard and download the file.
 It will have an extension of ".prvc". Put the file in the same folder with the Dockerfile.
@@ -33,15 +31,22 @@ to the "my.esri.com" web site, clicked the Developer tab, then clicked
 
 * Build the image
 
-Now you that you have added the proprietary files in the right place
-you can build an image,
+These images build on top of Wildsong/ubuntu-image so first build that... 
+
+   git clone https://github.com/docker-ubuntu-server ubuntu-server
+   cd ubuntu-server
+   docker buildx build -t wildsong/ubuntu-server .
+
+With that out of the way go back to this projects folder... 
+assuming you have the tar and license folders here (see above)
+go ahead and build ArcGIS Server.
 
     docker build -t wildsong/arcgis-server .
 
 At the end of the build it will something similar to this
 
 ```
-ArcGIS for Server is NOT authorized. You will need to run /home/arcgis/server/tools/authorizeSoftware before using ArcGIS Server 10.9.
+ArcGIS for Server is NOT authorized. You will need to run /home/arcgis/server/tools/authorizeSoftware before using ArcGIS Server 11.2.
 
 You will be able to access ArcGIS Server Manager by navigating to http://abff9e7e2995:6080/arcgis/manager.
 ```

@@ -1,7 +1,7 @@
-From wildsong/ubuntu-server:latest
+FROM wildsong/ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2021-09-23
-ENV ESRI_VERSION 10.9
+ENV REFRESHED_AT 2024-02-29
+ENV ESRI_VERSION 11.2
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -13,8 +13,10 @@ ADD limits.conf /etc/security/limits.conf
 
 ENV HOME /home/arcgis
 
+# TODO -- do the build in two stages so that this giant file does not
+# gobble up space in the final image.
 # "ADD" knows how to unpack the tar file directly into the docker image.
-ADD ArcGIS_Server_Linux_109*.tar.gz ${HOME}
+ADD ArcGIS_Server_Linux_112*.tar.gz ${HOME}
 
 # Add the script that can create the initial admin user and site
 # I can't actually run the create_new_site.py here because it will have
@@ -39,18 +41,32 @@ ENV LOGNAME arcgis
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen
 #   -l yes            Agree to the License Agreement
-RUN cd ArcGISServer && ./Setup -m silent --verbose -l yes
+
+# 2024-02-29 Install was failing with this error message,
+# *** DIAG024: The hostname entry in the /etc/hosts file must be in the following format:
+#        <IP> <FQDN> <Machine_name>
+# For example:
+#         111.222.333.444 hostname.esri.com hostname
+#
+# It's weird forcing the hostname this early in the game
+#
+
+
+
+
+# Make this quieter by adding "-m silent" and removing "--verbose".
+#RUN cd ArcGISServer && ./Setup --verbose -l yes
 
 # After Setup is complete, delete installer to free up space.  
 # If you are a developer you might want to leave it to get access to diagnostics, see
 # http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
-RUN rm -rf ${HOME}/ArcGISServer
+#RUN rm -rf ${HOME}/ArcGISServer
 
 # Change command line prompt
-ADD bashrc ./.bashrc
+#ADD bashrc ./.bashrc
 
 # Hmmm I wonder if I should check the HTTP or HTTPS service??
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:6080 || exit 1
+#HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:6080 || exit 1
 
 # Command that will be run by default when you do "docker run" 
-CMD ./start.sh && tail -f ./server/framework/etc/service_error.log
+#CMD ./start.sh && tail -f ./server/framework/etc/service_error.log
