@@ -1,7 +1,7 @@
-FROM wildsong/ubuntu-server:latest
+FROM ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2024-02-29
-ENV ESRI_VERSION 11.2
+ENV REFRESHED_AT 2024-03-01
+ENV ESRI_VERSION 11.1
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -11,62 +11,31 @@ EXPOSE 6080 6443
 # Refer to ESRI docs; this expands limits for user arcgis.
 ADD limits.conf /etc/security/limits.conf
 
-ENV HOME /home/arcgis
+# Add the repository for Postgres client
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main" >> /etc/apt/sources.list
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+# -- This is for ArcGIS 11.1
+RUN apt-get update && apt-get install -y postgresql-client-14
+# -- This is for ArcGIS 11.2 
+#RUN apt-get update && apt-get install -y postgresql-client-15
 
-# TODO -- do the build in two stages so that this giant file does not
-# gobble up space in the final image.
-# "ADD" knows how to unpack the tar file directly into the docker image.
-ADD ArcGIS_Server_Linux_112*.tar.gz ${HOME}
+WORKDIR /app
 
 # Add the script that can create the initial admin user and site
-# I can't actually run the create_new_site.py here because it will have
-# the usual problems (server must be running already)
-ADD create_new_site.py ${HOME}
+ADD create_new_site.py .
+ADD bashrc .
 
-# Instead this script will run create_new_site.py..
-ADD start.sh ${HOME}
+# This script will run create_new_site.py.
+ADD start.sh .
 
-# Put your license file and a downloaded copy of the server software
-# in the same folder as this Dockerfile
-ADD *.prvc ${HOME}
-
-RUN chown -R arcgis.arcgis ${HOME}
-
-# Start in the arcgis user's home directory.
-WORKDIR ${HOME}
-USER arcgis
 # ESRI uses this in some scripts (including 'backup')
 ENV LOGNAME arcgis
 
-# Run the ESRI installer script as user 'arcgis' with these options:
-#   -m silent         silent mode: don't pop up windows, we don't have a screen
-#   -l yes            Agree to the License Agreement
-
-# 2024-02-29 Install was failing with this error message,
-# *** DIAG024: The hostname entry in the /etc/hosts file must be in the following format:
-#        <IP> <FQDN> <Machine_name>
-# For example:
-#         111.222.333.444 hostname.esri.com hostname
-#
-# It's weird forcing the hostname this early in the game
-#
-
-
-
-
-# Make this quieter by adding "-m silent" and removing "--verbose".
-#RUN cd ArcGISServer && ./Setup --verbose -l yes
-
-# After Setup is complete, delete installer to free up space.  
-# If you are a developer you might want to leave it to get access to diagnostics, see
-# http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
-#RUN rm -rf ${HOME}/ArcGISServer
-
-# Change command line prompt
-#ADD bashrc ./.bashrc
-
-# Hmmm I wonder if I should check the HTTP or HTTPS service??
-#HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1:6080 || exit 1
+USER arcgis
+WORKDIR /home/arcgis
 
 # Command that will be run by default when you do "docker run" 
-#CMD ./start.sh && tail -f ./server/framework/etc/service_error.log
+CMD /app/start.sh
+# && tail -f ./server/framework/etc/service_error.log
+
+#HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS --insecure 127.0.0.1:6443 || exit 1

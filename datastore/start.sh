@@ -1,67 +1,49 @@
+#!/bin/bash
+#
 # Start the Datastore component
 #
 # Required ENV settings:
 # HOSTNAME HOME ESRI_VERSION
+# AGE_SERVER AGE_USERNAME AGE_PASSWORD
 
-if [ "$AGE_USER" = "" -o "$AGE_PASSWORD" = "" -o "$AGE_SERVER" = "" -o "$AGE_PORTAL" = "" ]
+if [ "$AGE_USERNAME" = "" -o "$AGE_PASSWORD" = "" -o "$AGE_SERVER" = "" ]
 then
-    echo "Make sure AGE_USER, AGE_PASSWORD, AGE_SERVER, and AGE_PORTAL"
+    echo "Make sure AGE_USERNAME, AGE_PASSWORD, AGE_SERVER"
     echo "are defined in the environment and try again."
     exit 1
 fi
 
-PORTAL="portal.${AGE_PORTAL}"
+source /app/bashrc
 
-# ESRI likes its hostname to be ALL UPPER CASE! but SOMETIMES not
-UPPERHOST=`python3 UPPER.py "$HOSTNAME"`
-
-# Our hostname is different than when we built this container image,
-# fix up the name of our properties file
-echo My hostname is $HOSTNAME
-NEWPROPERTIES=".ESRI.properties.${HOSTNAME}.${ESRI_VERSION}"
-PROPERTIES=".ESRI.properties.*.${ESRI_VERSION}"
-if ! [ -f "$NEWPROPERTIES" ] && [ -f "$PROPERTIES" ]; then
-    echo "Linked $PROPERTIES."
-    ln -s $PROPERTIES $NEWPROPERTIES
+if [ "$DS_DATADIR" == "" ]; then 
+  # Run the ESRI installer script as user 'arcgis' with these options:
+  #   -m silent         silent mode: don't pop up windows, we don't have a screen
+  #   -l yes            Agree to the License Agreement
+  cd /app/ArcGISDataStore && ./Setup -m silent --verbose -l yes -d /home
 fi
 
-#source datastore/framework/etc/scripts/arcgisdatastore.sh
-#IsStoreRunning
-#if [ $? -ne 0 ]; then
-    # Remove old log files (created in Docker build)
-    rm -f ${HOME}/datastore/usr/logs/${UPPERHOST}/server/*.l*
+echo My hostname is $HOSTNAME
 
-    # Start the datastore
-    ./datastore/startdatastore.sh
+SCRIPT=/home/arcgis/datastore/framework/etc/scripts/arcgisdatastore.sh
+if [ -f ${SCRIPT} ]; then
+  $SCRIPT restart
+fi
 
-    sleep 8
-#else
-#    echo "Datastore is already running"
-#fi
-
-# Find the log file. The hostname has to be UPPERCASE, gag me.
-# will get in trouble here if there are many log files, need entire datestamp thing
-# but we deleted all the logs up above, yikes, what a hack
-export LOGFILE="${HOME}/datastore/usr/logs/$UPPERHOST/server/*.log"
-echo "Logfile is $LOGFILE"
-
-echo -n "Is the Datastore server \"${HOSTNAME}\" ready? "
-curl --retry 15 -sS --insecure "https://${HOSTNAME}:2443/" > /tmp/dshttp
+echo -n "Waiting for Datastore to become ready "
+sleep 10
+curl --retry 15 -sS --insecure "https://localhost:2443/" > /tmp/dshttp
 if [ $? != 0 ]; then
     echo "Datastore missing!. $? Maybe it's slow to start?"
     exit 1
 fi
 echo "Yep!"
 
-# Is there already a datastore set up? Re-running does not appear to damage anything.
+# Re-running configuredatastore.sh does not appear to damage anything.
 # This will create the various and sundry files in the VOLUME "data"
 # The "relational" option means it will use its internal postgresql instance.
-# [--stores [relational][,][tileCache][,][spatiotemporal]]
-#cd datastore/tools
-#./configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USER} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational
-#./describedatastore.sh
+echo AGE Server = https://${AGE_SERVER}:6443 
+echo DS DataDir = ${DS_DATADIR}
+configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USERNAME} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational
+describedatastore.sh
 
-#cd ~
-#python3 federate.py $AGE_PORTAL $AGE_SERVER
-
-exit 0
+echo "Try reaching me at https://${HOSTNAME}:2443/"

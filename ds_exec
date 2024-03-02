@@ -1,0 +1,3 @@
+# Try to connect to DataStore with a bash shell
+#
+docker exec -it `docker ps | grep datastore | cut -b -12` bash

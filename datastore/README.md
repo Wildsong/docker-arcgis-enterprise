@@ -4,10 +4,6 @@ Docker container for the ESRI ArcGIS Enterprise Data Store
 
 I don't have a license for the temporal data so I don't address it,
 
-## Build 
-
-    docker build -t wildsong/datastore .
-
 ## Ports
 
 ### Web access port
@@ -44,13 +40,10 @@ On my first attempt to connect to the server I got this error:
 specified GIS Server site already has a managed data store."
  
 I had to open the ArcGIS Server Manager (on port 6443) go to "Site"
-tab select "Data Store" in the sidebar and select and delete the data
-store there
+tab select "Data Store" in the sidebar and select and delete 
+the data store there.
 
 ## Backends
-
-Datastore includes Postgresql, so I don't really care about anything else.
-I removed the notes I used to have here about SQL Server.
 
 From Desktop run the Create Spatial Type tool
 
@@ -71,5 +64,6 @@ another machine to test the restore process. That's what I am doing today.
 Hence all that is commented out in start.sh now.
 You have to do those steps manually now.
 
-
-
+Update, actually I had this wrong,
+you federate a server with a portal.
+Datastore is not in the picture.

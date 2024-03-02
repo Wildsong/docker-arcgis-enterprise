@@ -1,7 +1,7 @@
+#!/bin/env python
 #
 #  Federate ArcGIS Server to Portal and set it as Hosting Server
 #
-from __future__ import print_function
 import os, time
 import requests
 import json

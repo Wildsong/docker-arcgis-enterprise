@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-#  Run this in an ArcGIS container to start the server
+#  Run this in an ArcGIS container to install and start the server
 #  and configure it with the default admin/password and site
 #
 # Required ENV settings:
 # HOSTNAME HOME ESRI_VERSION
 
-cd $HOME
+echo My hostname is $HOSTNAME and my Server version is $ESRI_VERSION
 
 if [ "$AGS_USERNAME" = "" -o "$AGS_PASSWORD" = "" ]
 then
@@ -14,42 +14,42 @@ then
     #exit 1
 fi
 
-# Our hostname is different than when we built this container image,
-# fix up the name of our properties file
-echo My hostname is $HOSTNAME
-NEWPROPERTIES=".ESRI.properties.${HOSTNAME}.${ESRI_VERSION}"
-PROPERTIES=".ESRI.properties.*.${ESRI_VERSION}"
-if ! [ -f "$NEWPROPERTIES" ] && [ -f "$PROPERTIES" ]; then
-    echo "Linked $PROPERTIES."
-    ln -s $PROPERTIES $NEWPROPERTIES
+source /app/bashrc
+cd /home/arcgis
+
+PROPERTIES=".ESRI.properties.${HOSTNAME}.${ESRI_VERSION}"
+
+UNINSTALLER="/home/arcgis/server/uninstall_ArcGISServer"
+# Has the server been installed yet?
+SCRIPT="/home/arcgis/server/framework/etc/scripts/agsserver.sh"
+if [ -f $SCRIPT ]; then
+  echo "ArcGIS Server is already installed."
+  $SCRIPT status
+  #rm -rf server .ESRI.properties* .com.zerog.registry.xml
+  authorizeSoftware -s
+else
+  cd /app/ArcGISServer && ./Setup --verbose -l yes -m silent
+  authorizeSoftware -f /app/authorization.prvc
 fi
 
-# Do that brute force thing, remove the directory contents.
-CONFIGDIR="./server/usr/config-store"
-if [ -e ${CONFIGDIR}/.site ]; then
-    echo "Removing previous site configuration files."
-    rm -rf ${CONFIGDIR}/* ${CONFIGDIR}/.site
-fi
-
-# This would be a good place to authorize a
-# license file if you have not done that already
-# Check status first
-#./server/tools/authorizeSoftware -s
+serverinfo
 
 echo "Starting ArcGIS Server"
-./server/startserver.sh
+$SCRIPT restart
 
 # Pause for server to start
-sleep 15
-
 echo "Waiting for ArcGIS Server to start..."
+sleep 15
 curl --retry 20 -sS --insecure "https://$HOSTNAME:6443/arcgis/manager" > /tmp/apphttp
 if [ $? != 0 ]; then
     echo "ArcGIS did not start. $?"
     exit 1
 fi
 
+# Is a site configured?
+#
 echo "Yes; configuring default site." 
-python3 create_new_site.py
+/app/create_new_site.py $HOSTNAME $AGS_USERNAME $AGS_PASSWORD
+#fi
 
 exit 0

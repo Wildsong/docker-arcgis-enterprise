@@ -1,2 +1,5 @@
 # Change prompt
 export PS1="Data Store$ "
+
+PATH=$PATH:${HOME}/datastore/framework/runtime/pgsql/bin:${HOME}/datastore:${HOME}/datastore/tools
+export PATH

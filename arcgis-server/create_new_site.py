@@ -1,23 +1,21 @@
+#!/bin/env python
 #
 #  Send a very generic request to configure a site to ArcGIS Server.
 #
 #  This returns a response almost instantly but site creation takes
-#  longer. You can test if from the host (you don't need
+#  longer. You can test it from the host (you don't need
 #  to be inside the docker container to run it) but hostname
-#  has to resolve correctly. Also it probably silently fails... :-)
+#  has to resolve correctly. Also it probably fails silently. :-P
 #
 # See example:  http://server.arcgis.com/en/server/latest/administer/linux/example-create-a-site.htm
 #
-from __future__ import print_function
-import os
+import sys,os
 import requests
 import json
 
 # HTTPS calls will generate warnings about the self-signed certificate if you delete this.
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-hostname = "server" # localhost would almost always work here I think
 
 class arcgis(object):
 
@@ -26,7 +24,7 @@ class arcgis(object):
     def __init__(self):
         return
 
-    def create_site(self, user, passwd):
+    def create_site(self, hostname, user, passwd):
 
         configstorepath = os.path.join(self.defaultdir,"config-store")
         configstoreJSON = json.dumps({"connectionString":configstorepath, "type":"FILESYSTEM"})
@@ -67,7 +65,7 @@ class arcgis(object):
             "f"        : "json"
         }
 
-        uri = "https://%s:6443/arcgis/admin/createNewSite" % hostname
+        uri = f"https://{hostname}:6443/arcgis/admin/createNewSite"
 
         response = None
         try:
@@ -94,18 +92,14 @@ class arcgis(object):
 
 if __name__ == "__main__":
 
-    try:
-        u = os.environ["AGE_USER"]
-        p = os.environ["AGE_PASSWORD"]
-    except KeyError:
-        u = "siteadmin"
-        p = "changeit"
-        print("Using default username and password.")
+    hostname = sys.argv[1]
+    username = sys.argv[2]
+    password = sys.argv[3]
 
     ag = arcgis()
-    if ag.create_site(u,p):
+    if ag.create_site(hostname,username,password):
         print("Site created.")
 
-    print("https://localhost:6443/arcgis/manager/")
+    print(f"https://{hostname}:6443/arcgis/manager/")
 
 # That's all!

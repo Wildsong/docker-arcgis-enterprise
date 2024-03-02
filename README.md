@@ -21,7 +21,7 @@ Kubernetes is overkill. Sort of like using Windows Server when Linux would work.
 Make sure you check the wiki, https://github.com/Wildsong/docker-arcgis-enterprise/wiki
 
 There were 4 separate github repos for this project, they have been combined
-into one repo for all four dockers.
+into one repo for all four dockers. All part of my learning process.
 
 Each of these folders contains files to build a separate Docker image:
 
@@ -88,7 +88,7 @@ Copy the sample.env file to .env and edit it.
 I'm using docker-compose, so you should be able to start (in theory) everything with
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 and they will be running in background because of the -d.
@@ -96,12 +96,11 @@ and they will be running in background because of the -d.
 2021-09-23 Currently I'm only working on Datastore, so I do
 
 ```bash
-docker-compose up datastore
+docker compose up datastore
 ```
 
 This starts only the datastore and leave it running in foreground so
 I can watch the log messages.
-
 
 My intention is to start them all at once but I don't have a license right now.
 
@@ -112,6 +111,27 @@ I used to start each component separately like this, so I could watch all the st
 * window #3, cd web-adaptor && ./runwa
 * window #4, cd datastore && ./runds
 
+### Other tips on startup
+
+If you are debugging and the build is not putting your changes into the Docker image, it can be frustrating.
+Use "--no-cache" like this for example,
+
+   docker compose build server --no-cache
+
+Then when you go to run again, it will just restart a container when you use "up" so use "down" first!
+
+   docker compose down server
+   docker compose up server
+
+Now your changes should show up.
+
+## Some notes
+
+I don't know yet what files the installer looks for to detect an install is already done. I think it's the
+"Zero G registry" which is a file .com.zerog.registry.xml. In start.sh I just look for a properties file in /home/arcgis, 
+for example, .ESRI.properties.server.local.11.2 where HOSTNAME is set to "server.local".
+
+In Server, InstallAnywhere creates a .Setup folder and puts a log file in it. See ~/server/.Setup/ArcGISServer_InstallLog.log.
 
 ## Resources
 
