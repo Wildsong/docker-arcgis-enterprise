@@ -1,142 +1,202 @@
 # docker-arcgis-enterprise
-A set of dockers for ESRI ArcGIS Enterprise
+ESRI ArcGIS Enterprise running in Docker containers on Linux
+
+This project helped me learn vast amounts about how ArcGIS Enterprise
+is set up internally. 
+
+It also builds blindingly fast compared to Windows. 
+I use a Linux Desktop running Linux Mint and a 20 core Intel i9 and 64GB of RAM
+and a 1TB of NVME storage. That probably helps. :-)
+
+## To do
+
+* Set up Postgres as an Enterprise Geodatabase store.
+* Manage logs somehow; ideally push logs to STDOUT so that docker log commands work.
+* Include some test data including a map or two?
+* Figure out how to use license codes instead of provisioning files.
+* Remove hardcoded Esri version number, this should be pretty easy.
 
 ## History
 
-*In 2017, I paid for an Esri development license and worked on
+March 2024 -- I have temporary use of an 11.1 license so I did extensive updates
+on this project based on 6 years of experience with Docker. It's much
+simpler and faster to set up.
+
+Back in 2017, I paid for an Esri development license and worked on
 putting ArcGIS Enterprise into Docker. I pretty much had it working when
 two things happened, (1) I got a day job and (2) the license ran out.
 
 If I had a license I'd continue to develop it but I am not willing to pay right now.
 If you want me to do more work on it and you have a developer license, drop me a line.
 
-After glancing over the code today, the next thing I'd be doing is converting from
-Docker to Docker Swarm. Esri chose to use Kubernetes instead of Swarm, for my purposes
-Kubernetes is overkill. Sort of like using Windows Server when Linux would work... :-)
-
---Brian*
-
 ## Overview
 
-Make sure you check the wiki, https://github.com/Wildsong/docker-arcgis-enterprise/wiki
+Check the wiki, https://github.com/Wildsong/docker-arcgis-enterprise/wiki for additional notes.
 
-There were 4 separate github repos for this project, they have been combined
-into one repo for all four dockers. All part of my learning process.
-
-Each of these folders contains files to build a separate Docker image:
+These folders contains files to build a separate Docker image:
 
 * arcgis-server/
 * portal-for-arcgis/
 * web-adaptor/
 * datastore/
 
-## Create a network
+## Preparation
 
-To connect the separate dockers together and enable the use of hostnames
-requires creating a custom network.
+### Download archives and unpack them
 
-Use this command:
+Go to my.esri.com and log in. Go to the Downloads page. Go to Enterprise for Linux.
+Download the components you want to test; Server, Portal, DataStore, Web Adaptor.
+You can start with Server and go from there or dive in and grab all four.
 
-    docker network create wildsong.lan
+You have to use your own tar archive files, and you have to unpack them. You need
+the archive for each component; Portal, Server, DataStore, and Web Adaptor. Unpack them
+with the normal tar command, for example
 
-Each of the provided scripts in this repo assumes you use
-"wildsong.lan" as the network name.
+   tar xzvf ArcGIS_DataStore_Linux_111_185305.tar.gz
 
-You only have to do this once, it hangs around in your docker engine.
+This will create a folder "ArcGIS_DataStore_Linux". Repeat for the other components.
+I expect to find folders named
 
-When I am building and testing everything on my Mac, I just append the addresses
-to my /etc/hosts file so that name lookups work. For example,
+* ArcGISServer
+* 
+* ArcGIS_DataStore_Linux
+
+### Get license files
+
+You can actually build everything without any licenses but things won't run. :-)
+
+Do whatever you need to do to get your Server and Portal files. 
+
+* You need a "PRVC" provisioning file for Server named "ArcGISServer.prvc".
+* You need a JSON license file for Portal named "ArcGISPortal.json".
+* DataStore and Web Adaptors don't have any special needs.
+
+These file names are hard coded in compose.yaml, you could change them in there if you want.
+
+When I was using my Esri Developer subscription I had no problems getting whatever files I needed. Currently I have to use an 11.1 license because the my.esri.com website won't let me
+generate a new 11.2 PRVC file. Whatever. Maybe I will figure that out tomorrow.
+It's not important to me. I don't care what happened in the move from 11.1 
+to 11.2 as long as I can run something.
+
+You can use a license code (whatever they call those? The ones like "ECP1235678") 
+instead of provisioning files in theory but in the interests of making this as 
+automated as possible I only set it up to use the files.
+
+## Configuration
+
+### Hostnames
+
+I put the hostnames into my Pihole DNS server, and I used these:
+
+* server.local
+* portal.local
+* daatstore.local
+
+You could use some other DNS resolver like dnsmasq or if you are working on one machine, you 
+could just put them in /etc/hosts. (Or whatever works on Windows, lmhosts I guess.)
+
+For example,
 
     cat >> /etc/hosts
-    127.0.0.1 portal portal.wildsong.lan 
-    127.0.0.1 server server.wildsong.lan
-    127.0.0.1 web-adaptor web-adaptor.wildsong.lan
-    127.0.0.1 datastore datastore.wildsong.lan
+    127.0.0.1 portal portal.local
+    127.0.0.1 server server.local
+    127.0.0.1 datastore datastore.local
 
-You don't have to use "wildsong.lan", but if you change that then change AGS_DOMAIN too, see below.
+### Environment settings
 
-## Build everything
+Copy sample.env to .env and edit it. Since this is only for testing and experimentation,
+I just put it on the ".local" domain. You can change to a real domain, it should be 
+possible to do that by only editing ".env".
 
-* Download archives from ESRI. Put each tar.gz file in the appropriate folder.
-* Create provisioning files for ArcGIS Server and Portal for ArcGIS and put them in their folders.
+## Build Docker images
 
-(For testing only, it is also possible to build these containers
-without the propietary ESRI files, and that's what will happen on
-hub.docker.com once I get things sorted out.)
+Early versions of this project I baked the installer code right into the image files,
+figuring that would make deployment easy. I wanted each image to have a complete, 
+running service built into it. 
 
-### Build the containers using Docker Compose
+But this project is not about deployment, it's
+about testing and development, so I scrapped that.
 
-````bash
-  docker-compose build
-````
+Now the unpacked installers are mounted at run time instead. 
+The first time you run each container, the service is installed into a Docker volume.
+On subsquent startups, the installer is skipped.
 
-When you are done you should be able to see each image with the command "docker images"; 
-on my machine I see this:
+### Build the images using Docker Compose
 
-   REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
-   wildsong/datastore         latest              2b61b9429659        2 minutes ago       2.835 GB
-   wildsong/web-adaptor       latest              ab34fd0cdea5        4 minutes ago       1.156 GB
-   wildsong/portal-for-arcgis latest              e2e69bac2ca6        5 minutes ago       9.252 GB
-   wildsong/arcgis-server     latest              eae45e398fac        16 minutes ago      12.39 GB
+Build them all, or build them one at a time. In development I build and run one at a time.
 
-## Set environment variables
+Build them all like this,
 
-Copy the sample.env file to .env and edit it.
+   docker-compose build
+
+or build one at a time, for example, build the server component,
+
+   docker-compose build server
+
+Caching note -- If you are afraid changes are not getting commited to the images when you have
+edited files, you can add the option "--no-cache" to the build line. But chances
+are Docker is building correctly and you forgot to do "docker compose down".
+
+When you are done building you should be able to see each image 
+with the command "docker images"; on my machine I see this:
+
+   docker images
+   REPOSITORY         TAG       IMAGE ID       CREATED        SIZE
+   arcgis-server      latest    0b052cdea386   19 hours ago   609MB
+   arcgis-datastore   latest    fdee592f8eca   19 hours ago   602MB
+
+I'd see more but I am still working on this project. :-) This is it for now.
 
 ## Run everything
 
 I'm using docker-compose, so you should be able to start (in theory) everything with
 
-```bash
-docker compose up -d
-```
+    docker compose up -d
 
 and they will be running in background because of the -d.
 
-2021-09-23 Currently I'm only working on Datastore, so I do
+Today I'm only working on Datastore, so I do
 
-```bash
-docker compose up datastore
-```
+   docker compose up datastore
 
 This starts only the datastore and leave it running in foreground so
 I can watch the log messages.
 
-My intention is to start them all at once but I don't have a license right now.
-
-I used to start each component separately like this, so I could watch all the startup messages,
-
-* window #1, cd arcgis-server && ./runags
-* window #2, cd portal-for-arcgis && ./runportal
-* window #3, cd web-adaptor && ./runwa
-* window #4, cd datastore && ./runds
-
 ### Other tips on startup
 
-If you are debugging and the build is not putting your changes into the Docker image, it can be frustrating.
-Use "--no-cache" like this for example,
+As mentioned above if you are debugging and the build is not putting your changes into the Docker image, it can be frustrating. Use "--no-cache" like this for example,
 
    docker compose build server --no-cache
 
-Then when you go to run again, it will just restart a container when you use "up" so use "down" first!
+But it's probably doing the build correctly and either you've messed up somewhere else or
+you are restarting existing containers. Clear out the old containers like this
 
-   docker compose down server
-   docker compose up server
+   docker compose down
 
 Now your changes should show up.
 
-## Some notes
+Also keep in mind persistence! For example, once you have run "server" once it will
+have installed into a Docker volume. If you want it to completely reinstall you can
+delete the volume and make a new one. Of course, there goes all your data and settings too!
+Poof! Gone!
 
-I don't know yet what files the installer looks for to detect an install is already done. I think it's the
-"Zero G registry" which is a file .com.zerog.registry.xml. In start.sh I just look for a properties file in /home/arcgis, 
-for example, .ESRI.properties.server.local.11.2 where HOSTNAME is set to "server.local".
+## Some debugging notes
+
+I think Esri tracks what is installed in the "Zero G registry" 
+which is a file ".com.zerog.registry.xml". I ignore it.
+In start.sh I just look for a properties file in /home/arcgis, 
+for example, .ESRI.properties.server.local.11.1 when HOSTNAME is set to "server.local".
 
 In Server, InstallAnywhere creates a .Setup folder and puts a log file in it. See ~/server/.Setup/ArcGISServer_InstallLog.log.
 
 ## Resources
 
 You can learn a lot about how ESRI thinks provisioning should be done by reading the source
-code from their [Github Chef](https://github.com/Esri/arcgis-cookbook) repository. For example, here is
+code from their [Github Chef](https://github.com/Esri/arcgis-cookbook) repository. 
+
+### Create a site
+
+I use a script create_new_site.py but here is
 the code that creates a site by using REST. This is ruby code from
 arcgis-cookbook/cookbooks/arcgis-enterprise/libraries/server_admin_client.rb
 that is pretty easy to read, basically it's filling in a form and sending it.

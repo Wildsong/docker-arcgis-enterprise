@@ -1,14 +1,17 @@
 volumes:
+  portal_home:
+    name: arcgis_portal
   server_home:
     name: arcgis_server_home
   server_data:
     name: arcgis_server_data
   datastore_data:
-    # both data and logs will be here
     name: arcgis_datastore
 
 services:
   server:
+    image: arcgis-server
+    hostname: ${AGE_SERVER}
     build: 
       context: ./arcgis-server
       dockerfile: Dockerfile
@@ -16,31 +19,42 @@ services:
     environment:
       - AGS_USERNAME=${AGE_USERNAME}
       - AGS_PASSWORD=${AGE_PASSWORD} 
-    image: arcgis-server
-    hostname: ${AGE_SERVER}
     ports:
       - "6080:6080"
       - "6443:6443"
     volumes:
       - ./ArcGISServer:/app/ArcGISServer:ro
-      - ./ArcGISGISServerStandard_ArcGISServer_1314312.prvc:/app/authorization.prvc:ro
+      - ./ArcGISGISServerStandard.prvc:/app/authorization.prvc:ro
       - server_home:/home/arcgis:rw
 #      - server_config:/home/arcgis/server/usr/config-store
 #      - server_data:/home/arcgis/server/usr/directories
 #      - server_logs:/home/arcgis/server/usr/logs
     # Uncomment the next three lines to work in a shell environment for debugging.
+#    entrypoint: /bin/bash
+#    stdin_open: true
+#    tty: true
+
+  portal:
+    image: arcgis-portal
+    build:
+      context: ./portal-for-arcgis
+      dockerfile: Dockerfile
+    env_file: ./.env
+    environment:
+      - AGS_USERNAME=${AGE_USERNAME}
+      - AGS_PASSWORD=${AGE_PASSWORD} 
+    ports:
+      - "7080:7080"
+      - "7443:7443"
+    volumes:
+      - portal:/home/arcgis/portal/usr/arcgisportal
+    links:
+      - server
+      - datastore
+    # Uncomment the next three lines to work in a shell environment for debugging.
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
-
-#  portal:
-#    build: arcgis-portal
-#    image: arcgis-portal
-#    ports:
-#      - "7080:7080"
-#      - "7443:7443"
-#    volumes:
-#      - ./arcgis/portal:/home/arcgis/portal/usr/arcgisportal
 
 #  web-adaptor:
 #    build: web-adaptor
@@ -54,16 +68,16 @@ services:
 #      - "datastore"
 
   datastore:
+    image: arcgis-datastore
+    hostname: ${AGE_DATASTORE}
     build: 
       context: ./datastore
       dockerfile: Dockerfile
-    image: arcgis-datastore
     env_file: ./.env
     environment:
       - AGE_SERVER=${AGE_SERVER}
       - AGE_USERNAME=${AGE_USERNAME}
       - AGE_PASSWORD=${AGE_PASSWORD} 
-    hostname: ${AGE_DATASTORE}
     ports:
       - "2443:2443"
       - "9876:9876"
@@ -73,7 +87,7 @@ services:
     links:
       - server
     # Uncomment the next three lines to work in a shell environment for debugging.
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
+#    entrypoint: /bin/bash
+#    stdin_open: true
+#    tty: true
 
