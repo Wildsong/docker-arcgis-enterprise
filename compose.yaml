@@ -30,9 +30,9 @@ services:
 #      - server_data:/home/arcgis/server/usr/directories
 #      - server_logs:/home/arcgis/server/usr/logs
     # Uncomment the next three lines to work in a shell environment for debugging.
-#    entrypoint: /bin/bash
-#    stdin_open: true
-#    tty: true
+    #entrypoint: /bin/bash
+    #stdin_open: true
+    #tty: true
 
   portal:
     image: arcgis-portal
@@ -57,7 +57,7 @@ services:
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
-
+    
 #  web-adaptor:
 #    build: web-adaptor
 #    image: arcgis-web-adaptor
@@ -89,7 +89,7 @@ services:
     links:
       - server
     # Uncomment the next three lines to work in a shell environment for debugging.
-#    entrypoint: /bin/bash
-#    stdin_open: true
-#    tty: true
+    #entrypoint: /bin/bash
+    #stdin_open: true
+    #tty: true
 

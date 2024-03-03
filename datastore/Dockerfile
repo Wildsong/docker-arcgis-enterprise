@@ -34,6 +34,9 @@ ENV PGDATA /home/arcgis/data/pgdata
 # Perhaps if I can set this?
 #ENV ESRI_PROP_FILE_PATH=
 
+# Add the script that can create the initial admin user and site
+ADD create_new_site.py .
+
 ADD bashrc .
 
 # Add script to start service

@@ -2,8 +2,6 @@
 Builds an ESRI "ArcGIS Server" Docker image that runs on Ubuntu Server.
 Inspired by the xzdbd/arcgisserver and others.
 
-This page sums up the components in ArcGIS Enterprise:
-https://server.arcgis.com/en/server/latest/administer/linux/inside-an-arcgis-server-site.htm
 
 This procedure facilitates my testing with an ESRI Developer license. I can
 quickly spin up a copy of ArcGIS Server on a local machine and test ideas.
