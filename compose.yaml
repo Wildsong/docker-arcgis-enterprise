@@ -24,7 +24,7 @@ services:
       - "6443:6443"
     volumes:
       - ./ArcGISServer:/app/ArcGISServer:ro
-      - ./ArcGISGISServerStandard.prvc:/app/authorization.prvc:ro
+      - ./ArcGISGISServer.prvc:/app/authorization.prvc:ro
       - server_home:/home/arcgis:rw
 #      - server_config:/home/arcgis/server/usr/config-store
 #      - server_data:/home/arcgis/server/usr/directories
@@ -41,13 +41,15 @@ services:
       dockerfile: Dockerfile
     env_file: ./.env
     environment:
-      - AGS_USERNAME=${AGE_USERNAME}
-      - AGS_PASSWORD=${AGE_PASSWORD} 
+      - AGP_USERNAME=${AGE_USERNAME}
+      - AGP_PASSWORD=${AGE_PASSWORD} 
     ports:
       - "7080:7080"
       - "7443:7443"
     volumes:
-      - portal:/home/arcgis/portal/usr/arcgisportal
+      - ./PortalForArcGIS:/app/PortalForArcGIS:ro
+      - ./ArcGISGISServer.prvc:/app/authorization.prvc:ro
+      - portal_home:/home/arcgis/portal/usr/arcgisportal
     links:
       - server
       - datastore

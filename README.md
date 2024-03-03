@@ -10,6 +10,9 @@ and a 1TB of NVME storage. That probably helps. :-)
 
 ## To do
 
+* Remove all the outdated startup files and READMEs
+* There is a race condition, datastore needs to wait for Server to be ready.
+* PATH is not set the way I want. Set it in Dockerfile??
 * Set up Postgres as an Enterprise Geodatabase store.
 * Manage logs somehow; ideally push logs to STDOUT so that docker log commands work.
 * Include some test data including a map or two?
