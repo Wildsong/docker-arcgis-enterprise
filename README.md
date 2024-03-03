@@ -8,6 +8,8 @@ It also builds blindingly fast compared to Windows.
 I use a Linux Desktop running Linux Mint and a 20 core Intel i9 and 64GB of RAM
 and a 1TB of NVME storage. That probably helps. :-)
 
+*2024-03-02 REBUILDING FOR 2024!!! Bear with me for a couple days while I make huge changes.*
+
 ## To do
 
 * Remove all the outdated startup files and READMEs
