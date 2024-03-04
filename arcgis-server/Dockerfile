@@ -1,7 +1,6 @@
 FROM ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2024-03-01
-ENV ESRI_VERSION 11.1
+ENV REFRESHED_AT 2024-03-03
 
 EXPOSE 6080 6443
 # If you are not using a Docker network to connect containers
@@ -30,7 +29,7 @@ ADD start.sh .
 ENV LOGNAME arcgis
 
 USER arcgis
-WORKDIR /home/arcgis
+WORKDIR ${HOME}
 
 # Command that will be run by default when you do "docker run" 
 CMD /app/start.sh

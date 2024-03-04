@@ -1,25 +1,26 @@
 # docker-arcgis-enterprise
 ESRI ArcGIS Enterprise running in Docker containers on Linux
 
-This project helped me learn vast amounts about how ArcGIS Enterprise
-is set up internally. 
+*2024-03-03 REBUILDING FOR 2024!!! Bear with me for a couple days while I make huge changes.*
 
-It also builds blindingly fast compared to Windows. 
-I use a Linux Desktop running Linux Mint and a 20 core Intel i9 and 64GB of RAM
-and a 1TB of NVME storage. That probably helps. :-)
+This project helped me learn vast amounts about how
+ArcGIS Enterprise is set up internally. 
 
-*2024-03-02 REBUILDING FOR 2024!!! Bear with me for a couple days while I make huge changes.*
+It also builds blindingly fast compared to Windows, probably
+because it's a fresh install and I have no data needing upgrading.
+I use a Linux Desktop running Linux Mint and a 20 core Intel i9 
+and 64GB of RAM and a 1TB of NVME storage. That probably helps. :-)
 
 ## To do
 
 * Remove all the outdated startup files and READMEs
-* There is a race condition, datastore needs to wait for Server to be ready.
-* PATH is not set the way I want. Set it in Dockerfile??
-* Set up Postgres as an Enterprise Geodatabase store.
-* Manage logs somehow; ideally push logs to STDOUT so that docker log commands work.
-* Include some test data including a map or two?
 * Figure out how to use license codes instead of provisioning files.
-* Remove hardcoded Esri version number, this should be pretty easy.
+* Include some test data including a map or two?
+* Set up Postgres as an Enterprise Geodatabase store.
+
+* Portal does not start up without a license file
+and since it's not really starting it does not
+create the secret Postgres database that it uses.
 
 ## History
 
@@ -31,8 +32,9 @@ Back in 2017, I paid for an Esri development license and worked on
 putting ArcGIS Enterprise into Docker. I pretty much had it working when
 two things happened, (1) I got a day job and (2) the license ran out.
 
-If I had a license I'd continue to develop it but I am not willing to pay right now.
-If you want me to do more work on it and you have a developer license, drop me a line.
+If I had a license I'd continue to develop it
+but I am not willing to pay right now.
+If you want me to do more work on it and you have a developer license, get in touch.  brian@wildsong.biz
 
 ## Overview
 
@@ -60,11 +62,11 @@ with the normal tar command, for example
    tar xzvf ArcGIS_DataStore_Linux_111_185305.tar.gz
 
 This will create a folder "ArcGIS_DataStore_Linux". Repeat for the other components.
-I expect to find folders named
-
+I expect to find folders named like this:
 * ArcGISServer
-* 
 * ArcGIS_DataStore_Linux
+* PortalForArcGIS
+* ( something for web adaptor )
 
 ### Get license files
 
@@ -91,13 +93,13 @@ automated as possible I only set it up to use the files.
 
 ### Hostnames
 
-I put the hostnames into my Pihole DNS server, and I used these:
+I put the hostnames into my DNS server, and I used these:
 
 * server.local
 * portal.local
 * daatstore.local
 
-You could use some other DNS resolver like dnsmasq or if you are working on one machine, you 
+If you are working on one machine, you 
 could just put them in /etc/hosts. (Or whatever works on Windows, lmhosts I guess.)
 
 For example,
@@ -128,7 +130,22 @@ On subsquent startups, the installer is skipped.
 
 ### Build the images using Docker Compose
 
-Build them all, or build them one at a time. In development I build and run one at a time.
+#### Ubuntu image
+
+These all currently use my "ubuntu-server" image, so first
+go build that and then come back here. Maybe I should remove this requirement.
+
+   git clone https://github.com/docker-ubuntu-server ubuntu-server
+   cd ubuntu-server
+   docker buildx build -t wildsong/ubuntu-server .
+
+With that out of the way go back to this projects folder... 
+assuming you have the tar and license folders here (see above)
+go ahead and build the ArcGIS Docker images.
+
+#### ArcGIS Docker images
+
+Build them all, or build them one at a time. In development I built and ran one at a time.
 
 Build them all like this,
 
@@ -193,6 +210,86 @@ In start.sh I just look for a properties file in /home/arcgis,
 for example, .ESRI.properties.server.local.11.1 when HOSTNAME is set to "server.local".
 
 In Server, InstallAnywhere creates a .Setup folder and puts a log file in it. See ~/server/.Setup/ArcGISServer_InstallLog.log.
+
+## Notes on each component
+
+### Server
+
+There is a password reset command, 
+
+    passwordreset -p *newpassword*
+
+    # Files you should know about
+
+Here is where the authorization codes for software are kept:
+
+    /home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License11.1/sysgen/keycodes
+
+If you persist keycodes then you don't need to keep rerunning the licensing routine.
+
+Here is where the hostname is kept: server/framework/postinstall.dat
+
+### DataStore
+
+Runs a web server on port 2443 and its postgres server on 9876
+CouchDB is used for a tile store if you start one, on ports 
+29080 and 29081.
+
+The "spatiotemporal big data store" runs on ports 9220 9320
+but I've never tried because I have no license for it.
+
+Content gets stored in /home/arcgis/datastore/usr/arcgisdatastore
+
+#### Data store types
+
+*Relational* Required data store type for ArcGIS Enterprise, used by
+hosted feature layers, spatial analysis tools, and Insights
+for ArcGIS
+
+*Tile Cache* Stores tile caches for hosted scene layers
+
+*Spatiotemporal* Archives real-time data for GeoEvent Server, and stores
+output from GeoAnalytics Server tools
+
+#### Connection problem?
+
+On my first attempt to connect to the DataStore server I got this error:
+"Attempt to configure data store failed.. Extended error message: The
+specified GIS Server site already has a managed data store."
+ 
+I had to open the ArcGIS Server Manager (on port 6443) go to "Site"
+tab select "Data Store" in the sidebar and select and delete 
+the data store there.
+
+#### Backends
+
+From Desktop run the Create Spatial Type tool
+
+From ArcCatalog you can create a connection to a PostgreSQL database,
+then you can "Enable Enterprise Geodatabase". This will ask for an authorization file.
+It's looking for a keycodes file, not a PRVC file.
+
+### Portal
+
+Wait for configuration
+
+After launching the site you need to wait for the configuration script to complete.
+
+If you hit the portal site with your browser before it is done configuring itself,
+you will probably get the page that says "Create or Join a Portal".
+
+The last thing Portal does in the config process is restart itself, so the message will be similar to this:
+
+```
+<Msg time="2017-07-12T21:15:15,134" type="WARNING" code="217064" source="Portal" process="29" thread="1" methodName="" machine="PORTAL.WILDSONG.LAN" user="" elapsed="">The web server was found to be stopped. Re-starting it.</Msg>
+```
+
+### Web Adaptor
+
+*2024-03-03 I am not working on it right now.*
+
+There should be two of these, one for Portal and one for Server. Or maybe just one for Portal. What's the deal anyway,
+why do I need them at all?
 
 ## Resources
 

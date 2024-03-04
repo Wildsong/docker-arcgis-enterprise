@@ -3,7 +3,7 @@
 # Start the Datastore component
 #
 # Required ENV settings:
-# HOSTNAME HOME ESRI_VERSION
+# HOSTNAME ESRI_VERSION
 # AGE_SERVER AGE_USERNAME AGE_PASSWORD
 
 if [ "$AGE_USERNAME" = "" -o "$AGE_PASSWORD" = "" -o "$AGE_SERVER" = "" ]
@@ -14,6 +14,7 @@ then
 fi
 
 source /app/bashrc
+cp /app/bashrc /home/arcgis/.bashrc
 
 if [ "$DS_DATADIR" == "" ]; then 
   # Run the ESRI installer script as user 'arcgis' with these options:
@@ -24,61 +25,54 @@ fi
 
 echo My hostname is $HOSTNAME
 
+# Clumsily wipe all log files so when we start there will only be one.
+# TODO find the current logfile instead amd remove only old logs
+rm  -rf $LOGDIR/DATASTORE.LOCAL/server/*.l??
 
 SCRIPT=/home/arcgis/datastore/framework/etc/scripts/arcgisdatastore.sh
 if [ -f ${SCRIPT} ]; then
   echo "Restarting DataStore"
-  $SCRIPT restart
+  ${SCRIPT} restart
 fi
 
-# Clumsily wipe all log files so when we start
-# there will only be one.
-# TODO find the current logfile instead
-# amd remove only old logs
-LOGDIR=/home/arcgis/datastore/usr/arcgisdatastore/logs/DATASTORE.LOCAL/server
-rm -rf $LOGDIR/*.log $LOGDIR/*.lck
-
-echo -n "Waiting for Datastore to become ready.. "
+DATASTORE_URL="https://${AGE_DATASTORE}:2443/arcgis/"
+echo -n "Waiting for Datastore to start.. "
 sleep 10
 # --head = only header
 # --retry 10 = try 10 times with exponential backoff
 # -sS = be silent but show an error if there is one
-curl --retry 6 -sS --insecure --head "https://localhost:2443/arcgis/datastore/" > /tmp/dshttp
+curl --retry 6 -sS --insecure --head $DATASTORE_URL > /tmp/dshttp
 if [ $? != 0 ]; then
-  echo "Datastore not responding: $?"
-  exit 1
+  echo "DataStore not responding. $?"
 else
   echo "okay!"
 fi
 
+# Put things in more sensible locations for persistence
+#
+#LOGDIR=/home/arcgis/log
+LOGDIR=/home/arcgis/datastore/usr/arcgisdatastore/logs
+changeloglocation.sh ${LOGDIR}
+#
+#changenosqldslocation.sh ${TILECACHE_DIR}
+#changebackuplocation.sh ${BACKUP_DIR}
+
+SERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
 echo -n "Waiting for Server ${AGE_SERVER}.. "
-curl --retry 7 -sS --insecure --head "https://${AGE_SERVER}:6443/arcgis/" > /tmp/dshttp
+curl --retry 7 -sS --insecure --head $SERVER_URL > /tmp/dshttp
 if [ $? != 0 ]; then
   echo "Server did not respond: $?"
-  exit 1
 else
   echo "okay!"
 fi
 
 # Re-running configuredatastore.sh does not appear to damage anything.
-# This will create the various and sundry files in the VOLUME "data"
 # The "relational" option means it will use its internal postgresql instance.
-echo DS DataDir = ${DS_DATADIR}
+echo "Configuring datastore. Data will end up here: $DS_DATADIR"
 configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USERNAME} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational
 describedatastore.sh
 
-# Site configuration is done by REST
-# so really it can be done from any container
-# but I am doing it here because we know that both
-# Server and Datastore are available right now.
-
-# Is a site configured?
-#if??
-  echo "Configuring site." 
-  /app/create_new_site.py $AGE_SERVER $AGE_USERNAME $AGE_PASSWORD
-#fi
-
-echo "Try reaching me at https://${HOSTNAME}:2443/"
+echo "Try reaching me at ${DATASTORE_URL}"
 
 # I can start a process here that finds the current log file
 # and tails it to STDOUT
@@ -86,4 +80,5 @@ echo "Try reaching me at https://${HOSTNAME}:2443/"
 # so I need something to run here...
 # DataStore logs are boring, by the way.
 # Note there are many logs, this is the one for "server"
-tail -f $LOGDIR/*log
+#
+tail -f $LOGDIR/DATASTORE.LOCAL/server/*.log

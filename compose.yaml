@@ -1,6 +1,8 @@
 volumes:
   portal_home:
-    name: arcgis_portal
+    name: arcgis_portal_home
+  portal_data:
+    name: arcgis_portal_data
   server_home:
     name: arcgis_server_home
   server_data:
@@ -17,6 +19,7 @@ services:
       dockerfile: Dockerfile
     env_file: ./.env
     environment:
+      - ESRI_VERSION=${ESRI_VERSION}
       - AGS_USERNAME=${AGE_USERNAME}
       - AGS_PASSWORD=${AGE_PASSWORD} 
     ports:
@@ -36,20 +39,27 @@ services:
 
   portal:
     image: arcgis-portal
+    hostname: ${AGE_PORTAL}
     build:
       context: ./portal-for-arcgis
       dockerfile: Dockerfile
     env_file: ./.env
     environment:
+      - ESRI_VERSION=${ESRI_VERSION}
       - AGP_USERNAME=${AGE_USERNAME}
       - AGP_PASSWORD=${AGE_PASSWORD} 
+      - PORTAL_CONTENT=/home/arcgis/content
     ports:
       - "7080:7080"
       - "7443:7443"
     volumes:
       - ./PortalForArcGIS:/app/PortalForArcGIS:ro
-      - ./ArcGISGISServer.prvc:/app/authorization.prvc:ro
-      - portal_home:/home/arcgis/portal/usr/arcgisportal
+      - ./PortalForArcGIS.json:/app/portal_license.json:ro
+      - portal_home:/home/arcgis:rw
+      - portal_data:/home/arcgis/content:rw
+      # This is a really bad place for our data
+      # change the installer
+      #- portal_data:/home/arcgis/portal/usr/arcgisportal:rw
     links:
       - server
       - datastore
@@ -64,10 +74,9 @@ services:
 #    ports:
 #      - "80:80"
 #      - "443:443"
-#   links:
+#    links:
 #      - "portal"
 #      - "server"
-#      - "datastore"
 
   datastore:
     image: arcgis-datastore
@@ -77,6 +86,7 @@ services:
       dockerfile: Dockerfile
     env_file: ./.env
     environment:
+      - ESRI_VERSION=${ESRI_VERSION}
       - AGE_SERVER=${AGE_SERVER}
       - AGE_USERNAME=${AGE_USERNAME}
       - AGE_PASSWORD=${AGE_PASSWORD} 

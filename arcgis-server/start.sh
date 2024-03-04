@@ -1,39 +1,14 @@
 #!/bin/bash
 #
 #  Run this in an ArcGIS container to install and start the server
-#  and configure it with the default admin/password and site
 #
 # Required ENV settings:
-# HOSTNAME HOME ESRI_VERSION
-
-echo My hostname is $HOSTNAME 
-
-if [ "$AGS_USERNAME" = "" -o "$AGS_PASSWORD" = "" ]
-then
-    echo "You must define AGS_USERNAME and AGS_PASSWORD in the environment."
-    exit 1
-fi
+# HOSTNAME ESRI_VERSION
 
 source /app/bashrc
-cd /home/arcgis
+cp /app/bashrc /home/arcgis/.bashrc
 
 PROPERTIES=".ESRI.properties.${HOSTNAME}.${ESRI_VERSION}"
-
-UNINSTALLER="/home/arcgis/server/uninstall_ArcGISServer"
-# Has the server been installed yet?
-SCRIPT="/home/arcgis/server/framework/etc/scripts/agsserver.sh"
-if [ -f $SCRIPT ]; then
-  echo "ArcGIS Server is already installed."
-  #$SCRIPT status
-  #rm -rf server .ESRI.properties* .com.zerog.registry.xml
-  #authorizeSoftware -s
-else
-  echo "Installing ArcGIS Server."
-  cd /app/ArcGISServer && ./Setup --verbose -l yes -m silent
-  authorizeSoftware -f /app/authorization.prvc
-fi
-
-serverinfo
 
 # Clumsily wipe all log files so when we start
 # there will only be one.
@@ -42,19 +17,33 @@ serverinfo
 LOGDIR=/home/arcgis/server/usr/logs/SERVER.LOCAL/server/
 rm -rf $LOGDIR/*.log $LOGDIR/*.lck
 
+# Has the server been installed yet?
+SCRIPT="/home/arcgis/server/framework/etc/scripts/agsserver.sh"
+if [ -f $SCRIPT ]; then
+  echo "ArcGIS Server is already installed."
+else
+  echo "Installing ArcGIS Server."
+  cd /app/ArcGISServer && \
+  ./Setup -m silent --verbose -l yes
+  authorizeSoftware -f /app/authorization.prvc
+fi
+
 echo ""
 echo "Retarting ArcGIS Server"
 $SCRIPT restart
 
-# Pause for server to start
+SERVER_URL="https://${HOSTNAME}:6443/arcgis/manager"
 echo -n "Waiting for ArcGIS Server to start..."
 sleep 15
-curl --retry 6 -sS --insecure "https://$HOSTNAME:6443/arcgis/manager" > /tmp/apphttp
+curl --retry 6 -sS --insecure $SERVER_URL > /tmp/apphttp
 if [ $? != 0 ]; then
   echo "Server did not start. $?"
 else
   echo "okay!"
+  serverinfo
 fi
+
+echo "Try reaching me at ${SERVER_URL}"
 
 # I can start a process here that finds the current log file
 # and tails it to STDOUT

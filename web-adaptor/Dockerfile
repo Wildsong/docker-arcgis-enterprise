@@ -1,15 +1,8 @@
-FROM ubuntu:20.04
+FROM ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2020-04-17
+ENV REFRESHED_AT 2024-03-03
 
-# Uncomment the right lines for your version. 
-ENV ESRI_VERSION 10.7.1
-ENV TGZ 1071
-#ENV ESRI_VERSION 10.8
-#ENV TGZ 108
-
-ENV RELEASE=bionic
-# "bionic" is currently the latest Ubuntu LTS (Long Term Support) release.
+WE'RE NOT WORKING YET
 
 RUN apt-get update && apt-get -y install apt-utils locales
 RUN apt-get -y install iputils-ping curl
@@ -23,15 +16,7 @@ EXPOSE 80 443
 
 # Default dependencies cause openjdk 11 to be installed
 # which is not in the supported list
-RUN apt-get install -y openjdk-8-jre-headless tomcat8
-
-# Prerequisites: Before doing a "docker build", 
-# put a downloaded copy of the web adaptor installer
-# in the same folder as this Dockerfile
-
-# You can override these in docker-compose.yml
-ENV WA_NAME web-adaptor.wildsong.lan
-ENV PORTAL_NAME portal.wildsong.lan
+RUN apt-get install -y openjdk-9-jre-headless tomcat9
 
 # NOTE that CATALINA_BASE is where the app server's files live (owned by root)
 # and that the unprivileged user (tomcat) has its own HOME (owned by tomcat).
@@ -131,4 +116,5 @@ ADD check_portal.py .
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1 || exit 1
 
 # Start Tomcat on low ports, running in foreground (don't daemonize)
-CMD ./start.sh && tail -f /var/log/${TOMCAT}/catalina.out
+CMD ["/bin/bash", "/app/start.sh"]
+# && tail -f /var/log/${TOMCAT}/catalina.out

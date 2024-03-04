@@ -1,7 +1,6 @@
-From ubuntu-server:latest
+FROM ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2024-03-01
-ENV ESRI_VERSION 11.1
+ENV REFRESHED_AT 2024-03-03
 
 EXPOSE 2443 
 # If you are not using a Docker network to connect containers
@@ -20,8 +19,8 @@ WORKDIR /app
 # to using server/usr/config-store so don't try to move config-store!
 #RUN mkdir -p ${HOME}/server/usr
 
-ENV DS_DATADIR /home/arcgis/datastore/usr/arcgisdatastore
-ENV PGDATA /home/arcgis/data/pgdata
+ENV DS_DATADIR ${HOME}/datastore/usr/arcgisdatastore
+ENV PGDATA ${HOME}/data/pgdata
 # see also elasticdata/ and nosqldata/
 
 # Set path so we can run psql from bash shell
@@ -34,18 +33,13 @@ ENV PGDATA /home/arcgis/data/pgdata
 # Perhaps if I can set this?
 #ENV ESRI_PROP_FILE_PATH=
 
-# Add the script that can create the initial admin user and site
-ADD create_new_site.py .
-
 ADD bashrc .
-
-# Add script to start service
 ADD start.sh start.sh
 
 # Change command line prompt
 USER arcgis
-WORKDIR /home/arcgis
+WORKDIR ${HOME}
 
 # Command that will be run by default when you do "docker run"
-CMD /app/start.sh
+CMD ["/bin/bash", "/app/start.sh"]
 # && tail -f ~/datastore/framework/etc/service_error.log
