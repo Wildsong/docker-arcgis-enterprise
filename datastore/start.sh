@@ -6,15 +6,11 @@
 # HOSTNAME ESRI_VERSION
 # AGE_SERVER AGE_USERNAME AGE_PASSWORD
 
-if [ "$AGE_USERNAME" = "" -o "$AGE_PASSWORD" = "" -o "$AGE_SERVER" = "" ]
-then
-    echo "Make sure AGE_USERNAME, AGE_PASSWORD, AGE_SERVER"
-    echo "are defined in the environment and try again."
-    exit 1
-fi
-
 source /app/bashrc
 cp /app/bashrc /home/arcgis/.bashrc
+
+# I think I want to put DS_DATADIR someplace persistent
+# where does it get defined anyway?
 
 if [ "$DS_DATADIR" == "" ]; then 
   # Run the ESRI installer script as user 'arcgis' with these options:
@@ -22,8 +18,6 @@ if [ "$DS_DATADIR" == "" ]; then
   #   -l yes            Agree to the License Agreement
   cd /app/ArcGISDataStore && ./Setup -m silent --verbose -l yes -d /home
 fi
-
-echo My hostname is $HOSTNAME
 
 # Clumsily wipe all log files so when we start there will only be one.
 # TODO find the current logfile instead amd remove only old logs
@@ -69,8 +63,12 @@ fi
 # Re-running configuredatastore.sh does not appear to damage anything.
 # The "relational" option means it will use its internal postgresql instance.
 echo "Configuring datastore. Data will end up here: $DS_DATADIR"
-configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USERNAME} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational
+configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USERNAME} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational,tileCache
 describedatastore.sh
+
+# FIXME
+# It seems to work but when I check the datastores in Server, it won't validate the relational store.
+# I can see in the process table that the captive postgres server is running.
 
 echo "Try reaching me at ${DATASTORE_URL}"
 
