@@ -1,6 +1,6 @@
 FROM ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2024-03-03
+ENV REFRESHED_AT 2024-03-04
 
 # Port information: http://server.arcgis.com/en/portal/latest/install/windows/ports-used-by-portal-for-arcgis.htm
 EXPOSE 7080 7443
@@ -13,15 +13,10 @@ WORKDIR /app
 ADD bashrc .
 ADD start.sh .
 
-# Add the script that can create the initial admin user and site
-ADD create_new_site.py .
-
 # ESRI uses LOGNAME
 ENV LOGNAME arcgis
 
-RUN chown -R arcgis:arcgis $HOME
 WORKDIR ${HOME}
-USER arcgis
 
 # Set path so we can run psql from bash shell
 # Note that it's listening on port 7654, so try

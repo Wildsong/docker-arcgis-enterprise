@@ -1,4 +1,10 @@
 volumes:
+#
+# *_home volumes are the /home/arcgis directories
+# and the software for each service gets installed there.
+#
+# *_data volumes are where the data for each services gets stored.
+#
   portal_home:
     name: arcgis_portal_home
   portal_data:
@@ -7,66 +13,67 @@ volumes:
     name: arcgis_server_home
   server_data:
     name: arcgis_server_data
+  datastore_home:
+    name: arcgis_datastore_home
   datastore_data:
-    name: arcgis_datastore
+    name: arcgis_datastore_data
 
 services:
   server:
     image: arcgis-server
-    hostname: ${AGE_SERVER}
+    hostname: ${GISSERVER}
     build: 
-      context: ./arcgis-server
+      context: ./server
       dockerfile: Dockerfile
     env_file: ./.env
     environment:
       - ESRI_VERSION=${ESRI_VERSION}
-      - AGS_USERNAME=${AGE_USERNAME}
-      - AGS_PASSWORD=${AGE_PASSWORD} 
+      - AGS_USERNAME=${USERNAME}
+      - AGS_PASSWORD=${PASSWORD} 
     ports:
       - "6080:6080"
       - "6443:6443"
     volumes:
-      - ./ArcGISServer:/app/ArcGISServer:ro
-      - ./ArcGISGISServer.prvc:/app/authorization.prvc:ro
+      - ./GISServer_11.0:/app/ArcGISServer:ro
+      - ./ArcGISGISServerStandard_ArcGISServer_1431202.prvc:/app/authorization.prvc:ro
       - server_home:/home/arcgis:rw
+      - server_data:/home/arcgis/directories:rw
 #      - server_config:/home/arcgis/server/usr/config-store
-#      - server_data:/home/arcgis/server/usr/directories
 #      - server_logs:/home/arcgis/server/usr/logs
-    # Uncomment the next three lines to work in a shell environment for debugging.
-    #entrypoint: /bin/bash
-    #stdin_open: true
-    #tty: true
-
-  portal:
-    image: arcgis-portal
-    hostname: ${AGE_PORTAL}
-    build:
-      context: ./portal-for-arcgis
-      dockerfile: Dockerfile
-    env_file: ./.env
-    environment:
-      - ESRI_VERSION=${ESRI_VERSION}
-      - AGP_USERNAME=${AGE_USERNAME}
-      - AGP_PASSWORD=${AGE_PASSWORD} 
-      - PORTAL_CONTENT=/home/arcgis/content
-    ports:
-      - "7080:7080"
-      - "7443:7443"
-    volumes:
-      - ./PortalForArcGIS:/app/PortalForArcGIS:ro
-      - ./PortalForArcGIS.json:/app/portal_license.json:ro
-      - portal_home:/home/arcgis:rw
-      - portal_data:/home/arcgis/content:rw
-      # This is a really bad place for our data
-      # change the installer
-      #- portal_data:/home/arcgis/portal/usr/arcgisportal:rw
-    links:
-      - server
-      - datastore
     # Uncomment the next three lines to work in a shell environment for debugging.
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
+
+# 2024-03-04 Not working on Portal right now
+#  portal:
+#    image: arcgis-portal
+#    hostname: ${PORTAL}
+#    build:
+#      context: ./portal
+#      dockerfile: Dockerfile
+#    env_file: ./.env
+#    environment:
+#      - ESRI_VERSION=${ESRI_VERSION}
+#      - AGP_USERNAME=${USERNAME}
+#      - AGP_PASSWORD=${PASSWORD} 
+#      - PORTAL_CONTENT=/home/arcgis/content
+#    ports:
+#      - "7080:7080"
+#      - "7443:7443"
+#    volumes:
+#      - ./PortalForArcGIS:/app/PortalForArcGIS:ro
+#      - ./PortalForArcGIS.json:/app/portal_license.json:ro
+#      - portal_home:/home/arcgis:rw
+#      - portal_data:/home/arcgis/content:rw
+      #- portal_data:/home/arcgis/portal/usr/arcgisportal:rw
+#    links:
+#      - server
+#      - datastore
+    # Uncomment the next three lines to work in a shell environment for debugging.
+#    entrypoint: /bin/bash
+#    stdin_open: true
+#    tty: true
     
 #  web-adaptor:
 #    build: web-adaptor
@@ -80,26 +87,28 @@ services:
 
   datastore:
     image: arcgis-datastore
-    hostname: ${AGE_DATASTORE}
+    hostname: ${DATASTORE}
     build: 
       context: ./datastore
       dockerfile: Dockerfile
     env_file: ./.env
     environment:
       - ESRI_VERSION=${ESRI_VERSION}
-      - AGE_SERVER=${AGE_SERVER}
-      - AGE_USERNAME=${AGE_USERNAME}
-      - AGE_PASSWORD=${AGE_PASSWORD} 
+      - AGE_SERVER=${GISSERVER}
+      - AGS_USERNAME=${USERNAME}
+      - AGS_PASSWORD=${PASSWORD} 
     ports:
       - "2443:2443"
       - "9876:9876"
     volumes:
       - ./ArcGISDataStore_Linux:/app/ArcGISDataStore:ro
-      - datastore_data:/home/arcgis/datastore
+      - datastore_home:/home/arcgis/datastore:rw
+# where does this belong
+#      - datastore_data:/home/arcgis/?????:rw
     links:
       - server
     # Uncomment the next three lines to work in a shell environment for debugging.
-    #entrypoint: /bin/bash
-    #stdin_open: true
-    #tty: true
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true
 

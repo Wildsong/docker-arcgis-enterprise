@@ -1,6 +1,6 @@
 FROM ubuntu-server:latest
 LABEL maintainer="brian@wildsong.biz"
-ENV REFRESHED_AT 2024-03-03
+ENV REFRESHED_AT 2024-03-04
 
 EXPOSE 2443 
 # If you are not using a Docker network to connect containers
@@ -33,11 +33,12 @@ ENV PGDATA ${HOME}/data/pgdata
 # Perhaps if I can set this?
 #ENV ESRI_PROP_FILE_PATH=
 
+# Add the script that can create the initial admin user and site
+ADD create_new_site.py .
+
 ADD bashrc .
 ADD start.sh start.sh
 
-# Change command line prompt
-USER arcgis
 WORKDIR ${HOME}
 
 # Command that will be run by default when you do "docker run"

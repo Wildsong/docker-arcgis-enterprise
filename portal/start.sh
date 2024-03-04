@@ -47,9 +47,12 @@ fi
 # Instead of spelling out all these options it is also
 # possible to feed a properties file, for example see
 # ~/portal/tools/createportal/createportal.properties
-createportal.sh -fn Sample -ln User -u ${AGP_USERNAME} -p ${AGP_PASSWORD} -d ${PORTAL_CONTENT}
-# \
-#-lf /app/portal_license.json
+# Note that all of these arguments except -d are required, else the script fails 
+createportal.sh -fn Site -ln Admin \
+		-u ${AGP_USERNAME} -p ${AGP_PASSWORD} \
+		-e ${ADMIN_EMAIL} \
+		-d ${PORTAL_CONTENT} \
+		-lf /app/portal_license.json
 
 CONFIG_STORE="/home/arcgis/portal/framework/etc/config-store-connection.json"
 if [ -f $CONFIG_STORE} ]; then
@@ -57,24 +60,6 @@ if [ -f $CONFIG_STORE} ]; then
 else
   echo "Portal is not configured."
 fi
-
-# Site configuration is done by REST
-# so really it can be done from any container
-# but I am doing it here.
-SERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
-# Is a site configured?
-#if??
-# I don't know how to check yet.
-  echo -n "Waiting for Server ${AGE_SERVER}.. "
-  curl --retry 7 -sS --insecure --head $SERVER_URL > /tmp/dshttp
-  if [ $? != 0 ]; then
-    echo "Server did not respond: $?"
-  else
-    echo "okay!"
-  fi
-  echo "Configuring site." 
-  /app/create_new_site.py $AGE_SERVER $AGE_USERNAME $AGE_PASSWORD
-#fi
 
 echo "Try reaching me at ${PORTAL_URL}"
 

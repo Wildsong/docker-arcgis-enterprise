@@ -16,12 +16,6 @@
 #  URLs implies it could be run from anywhere that has 
 #  access to the URLs and the user credentials.
 
-if [ "$AGS_USER" = "" -o "$AGS_PASSWORD" = "" ]
-then
-    echo "Define AGS_USER and AGS_PASSWORD in the environment and try again."
-    exit 1
-fi
-
 # I need WA_NAME and PORTAL_NAME from the environment (in the
 # Dockerfile) and due to the miracle of inconsistency if they
 # are FQDN's they won't work. Portal has to be a simple hostname

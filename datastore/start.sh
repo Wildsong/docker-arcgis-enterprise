@@ -3,8 +3,8 @@
 # Start the Datastore component
 #
 # Required ENV settings:
-# HOSTNAME ESRI_VERSION
-# AGE_SERVER AGE_USERNAME AGE_PASSWORD
+# HOSTNAME AGE_SERVER AGS_USERNAME AGS_PASSWORD
+# HOSTNAME has to be UPPER CASE, for example "DATASTORE.LOCAL"; set it in compose.yaml
 
 source /app/bashrc
 cp /app/bashrc /home/arcgis/.bashrc
@@ -21,7 +21,7 @@ fi
 
 # Clumsily wipe all log files so when we start there will only be one.
 # TODO find the current logfile instead amd remove only old logs
-rm  -rf $LOGDIR/DATASTORE.LOCAL/server/*.l??
+rm  -rf $LOGDIR/${HOSTNAME}/server/*.l??
 
 SCRIPT=/home/arcgis/datastore/framework/etc/scripts/arcgisdatastore.sh
 if [ -f ${SCRIPT} ]; then
@@ -29,7 +29,7 @@ if [ -f ${SCRIPT} ]; then
   ${SCRIPT} restart
 fi
 
-DATASTORE_URL="https://${AGE_DATASTORE}:2443/arcgis/"
+DATASTORE_URL="https://${HOSTNAME}:2443/arcgis/"
 echo -n "Waiting for Datastore to start.. "
 sleep 10
 # --head = only header
@@ -51,9 +51,9 @@ changeloglocation.sh ${LOGDIR}
 #changenosqldslocation.sh ${TILECACHE_DIR}
 #changebackuplocation.sh ${BACKUP_DIR}
 
-SERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
+GISSERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
 echo -n "Waiting for Server ${AGE_SERVER}.. "
-curl --retry 7 -sS --insecure --head $SERVER_URL > /tmp/dshttp
+curl --retry 7 -sS --insecure --head $GISSERVER_URL > /tmp/dshttp
 if [ $? != 0 ]; then
   echo "Server did not respond: $?"
 else
@@ -63,7 +63,7 @@ fi
 # Re-running configuredatastore.sh does not appear to damage anything.
 # The "relational" option means it will use its internal postgresql instance.
 echo "Configuring datastore. Data will end up here: $DS_DATADIR"
-configuredatastore.sh https://${AGE_SERVER}:6443 ${AGE_USERNAME} ${AGE_PASSWORD} ${DS_DATADIR} --stores relational,tileCache
+configuredatastore.sh https://${AGE_SERVER}:6443 ${AGS_USERNAME} ${AGS_PASSWORD} ${DS_DATADIR} --stores relational,tileCache
 describedatastore.sh
 
 # FIXME
@@ -72,6 +72,26 @@ describedatastore.sh
 
 echo "Try reaching me at ${DATASTORE_URL}"
 
+# Site configuration is done by REST so really it can be done anywhere
+# but I am doing it here because at this point I know both GISServer
+# and DataStore are running.
+
+GISSERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
+# Is a site configured?
+#if??
+# I don't know how to check yet.
+  echo -n "Waiting for GIS Server ${AGE_SERVER}.. "
+  curl --retry 7 -sS --insecure --head $GISSERVER_URL > /tmp/dshttp
+  if [ $? != 0 ]; then
+    echo "Server did not respond: $?"
+  else
+    echo "okay!"
+  fi
+  echo "Configuring site." 
+  /app/create_new_site.py $AGE_SERVER $AGE_USERNAME $AGE_PASSWORD
+#fi
+
+
 # I can start a process here that finds the current log file
 # and tails it to STDOUT
 # I don't have a way to start in "no daemon" mode
@@ -79,4 +99,4 @@ echo "Try reaching me at ${DATASTORE_URL}"
 # DataStore logs are boring, by the way.
 # Note there are many logs, this is the one for "server"
 #
-tail -f $LOGDIR/DATASTORE.LOCAL/server/*.log
+tail -f $LOGDIR/${HOSTNAME}/server/*.log

@@ -1,7 +1,16 @@
 # docker-arcgis-enterprise
 ESRI ArcGIS Enterprise running in Docker containers on Linux
 
-*2024-03-03 REBUILDING FOR 2024!!! Bear with me for a couple days while I make huge changes.*
+*2024-03 REBUILDING FOR 11!!!*
+
+I see that if I run Ubuntu (check) and I want to try ArcGIS Notebook Server (ok) then
+I can use the free version of Docker. Cool. So, I am adding that to my to-do list
+
+3/4/24 **I have hit the licensing wall for Portal** -- I don't have an
+available Creator level license to use for testing.  So I will
+continue testing ArcGIS Server and DataStore and pretend Portal simply
+does not exist.  (Maybe I will write my own?) Or maybe someone will
+step up and help.
 
 This project helped me learn vast amounts about how
 ArcGIS Enterprise is set up internally. 
@@ -13,28 +22,29 @@ and 64GB of RAM and a 1TB of NVME storage. That probably helps. :-)
 
 ## To do
 
+* Add a container for Notebook Server; can I run the server in a container when it's managing containers too? We'll see! LOL
+* I am thinking about breaking it into a config stage and a run stage,
+using two compose YAML files.
+* I am making it run the installation as root to bypass permissions issues creating folders.
+I'd really like it to run as arcgis and not have full perms on every installed file! Very un-Windows I know but...
 * Remove all the outdated startup files and READMEs
 * Figure out how to use license codes instead of provisioning files.
 * Include some test data including a map or two?
 * Set up Postgres as an Enterprise Geodatabase store.
 
-* Portal does not start up without a license file
-and since it's not really starting it does not
-create the secret Postgres database that it uses.
-
 ## History
 
-March 2024 -- I have temporary use of an 11.1 license so I did extensive updates
+March 2024 -- I have temporary use of an 11.0 license so I did extensive updates
 on this project based on 6 years of experience with Docker. It's much
 simpler and faster to set up.
 
-Back in 2017, I paid for an Esri development license and worked on
-putting ArcGIS Enterprise into Docker. I pretty much had it working when
-two things happened, (1) I got a day job and (2) the license ran out.
+In 2017, I paid for an Esri development license and worked on putting
+ArcGIS Enterprise into Docker. I pretty much had it working when two
+things happened, (1) I got a day job and (2) the license ran out.
 
-If I had a license I'd continue to develop it
-but I am not willing to pay right now.
-If you want me to do more work on it and you have a developer license, get in touch.  brian@wildsong.biz
+If I had a license I'd continue to develop it but I am not willing to
+pay right now.  If you want me to do more work on it and you have a
+developer license, get in touch.  brian@wildsong.biz
 
 ## Overview
 
@@ -270,6 +280,10 @@ then you can "Enable Enterprise Geodatabase". This will ask for an authorization
 It's looking for a keycodes file, not a PRVC file.
 
 ### Portal
+
+Portal does not start up without a license file and since it's not
+really starting it does not create the secret Postgres database that
+it uses. Or it does not use one on Linux? No idea right now.
 
 Wait for configuration
 
