@@ -35,8 +35,8 @@ services:
       - "6443:6443"
     volumes:
       - ./Installers/ArcGISServer:/app/Installer:ro
-      - ./configurebasedeployment.properties:/app/configurebasedeployment.properties:ro
       - ./Licenses/server.prvc:/app/server.prvc:ro
+      - ./configurebasedeployment.properties:/app/configurebasedeployment.properties:rw
       - server_home:/home/arcgis:rw
       - server_data:/srv/directories:rw
 #      - server_config:/home/arcgis/server/usr/config-store

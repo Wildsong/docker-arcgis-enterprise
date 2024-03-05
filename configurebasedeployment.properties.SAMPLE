@@ -1,7 +1,13 @@
 # This file was copied from ArcGISGISServer 11.0 tools/configurebasedeployment/
 # and edited for this project.
+#
 # You still need to copy it to configurebasedeployment.properties
 # and edit some settings, like email address and password
+#
+# ** The file will be rewritten by the script. **
+#
+
+
 
 # Configure a base ArcGIS Enterprise deployment properties
 #

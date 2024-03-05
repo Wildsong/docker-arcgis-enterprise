@@ -53,8 +53,7 @@ fi
 
 # Has this server been configured?
 if true ; then
-# It's possible to set the web adaptor here too.
-    $HOME/server/tools/configurebasedeployment/configurebasedeployment.sh /app/configurebasedeployment.properties
+    configurebasedeployment.sh -f /app/configurebasedeployment.properties
 fi
 
 echo "Try reaching me at ${SERVER_URL}"
