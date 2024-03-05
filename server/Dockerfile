@@ -30,6 +30,9 @@ ENV LOGNAME arcgis
 
 WORKDIR ${HOME}
 
+# The installer will not run as root. It just exits.
+USER arcgis
+
 # Command that will be run by default when you do "docker run" 
 CMD /app/start.sh
 # && tail -f ./server/framework/etc/service_error.log

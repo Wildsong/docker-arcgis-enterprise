@@ -34,16 +34,16 @@ services:
       - "6080:6080"
       - "6443:6443"
     volumes:
-      - ./GISServer_11.0:/app/ArcGISServer:ro
-      - ./ArcGISGISServerStandard_ArcGISServer_1431202.prvc:/app/authorization.prvc:ro
+      - ./Installers/ArcGISServer:/app/Installer:ro
+      - ./Licenses/server.prvc:/app/server.prvc:ro
       - server_home:/home/arcgis:rw
       - server_data:/home/arcgis/directories:rw
 #      - server_config:/home/arcgis/server/usr/config-store
 #      - server_logs:/home/arcgis/server/usr/logs
-    # Uncomment the next three lines to work in a shell environment for debugging.
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
+    # Uncomment the next three lines to work in a shell environment for debugging. (See exec_server)
+    #entrypoint: /bin/bash
+    #stdin_open: true
+    #tty: true
 
 # 2024-03-04 Not working on Portal right now
 #  portal:
@@ -62,8 +62,8 @@ services:
 #      - "7080:7080"
 #      - "7443:7443"
 #    volumes:
-#      - ./PortalForArcGIS:/app/PortalForArcGIS:ro
-#      - ./PortalForArcGIS.json:/app/portal_license.json:ro
+#      - ./Installers/PortalForArcGIS:/app/Installer:ro
+#      - ./Licenses/portal.json:/app/portal_license.json:ro
 #      - portal_home:/home/arcgis:rw
 #      - portal_data:/home/arcgis/content:rw
       #- portal_data:/home/arcgis/portal/usr/arcgisportal:rw
@@ -101,7 +101,7 @@ services:
       - "2443:2443"
       - "9876:9876"
     volumes:
-      - ./ArcGISDataStore_Linux:/app/ArcGISDataStore:ro
+      - ./Installers/DataStore:/app/Installer:ro
       - datastore_home:/home/arcgis/datastore:rw
 # where does this belong
 #      - datastore_data:/home/arcgis/?????:rw

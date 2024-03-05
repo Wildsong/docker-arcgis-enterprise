@@ -20,19 +20,26 @@ rm -rf $LOGDIR/*.log $LOGDIR/*.lck
 # Has the server been installed yet?
 SCRIPT="/home/arcgis/server/framework/etc/scripts/agsserver.sh"
 if [ -f $SCRIPT ]; then
-  echo "ArcGIS Server is already installed."
+  # Starting ArcGIS Server
+  $SCRIPT start
 else
   echo "Installing ArcGIS Server."
-  cd /app/ArcGISServer && \
-  ./Setup -m silent --verbose -l yes
-  authorizeSoftware -f /app/authorization.prvc
+  /app/Installer/Setup -m silent --verbose -l yes
 fi
 
-echo ""
-echo "Retarting ArcGIS Server"
-$SCRIPT restart
+echo "Server info"
+serverinfo
 
-SERVER_URL="https://${HOSTNAME}:6443/arcgis/manager"
+# Has it been authorized? Maybe run the status command instead of this?
+if [ -f /home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License${ESRI_VERSION}/sysgen/keycodes ]
+then
+  echo "Authorizing."
+  authorizeSoftware -f /app/server.prvc
+else
+  authorizeSoftware -s
+fi
+
+SERVER_URL="https://${HOSTNAME}:6443/arcgis/manager/"
 echo -n "Waiting for ArcGIS Server to start..."
 sleep 15
 curl --retry 6 -sS --insecure $SERVER_URL > /tmp/apphttp
@@ -40,7 +47,6 @@ if [ $? != 0 ]; then
   echo "Server did not start. $?"
 else
   echo "okay!"
-  serverinfo
 fi
 
 echo "Try reaching me at ${SERVER_URL}"
