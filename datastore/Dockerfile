@@ -12,14 +12,9 @@ RUN chown -R arcgis:arcgis ${HOME}
 
 WORKDIR /app
 
-# Make sure the mount points for the VOLUME command exist before we do
-# the "docker run".  I am pretty sure they are created during the
-# Setup run (previous RUN) but not certain.  Note: the file ESRI
-# installs server/framework/etc/config-store-connections.xml defaults
-# to using server/usr/config-store so don't try to move config-store!
 #RUN mkdir -p ${HOME}/server/usr
 
-ENV DS_DATADIR ${HOME}/datastore/usr/arcgisdatastore
+
 ENV PGDATA ${HOME}/data/pgdata
 # see also elasticdata/ and nosqldata/
 
@@ -27,8 +22,10 @@ ENV PGDATA ${HOME}/data/pgdata
 # Note that it's listening on port 7654, so try
 # psql -h localhost -p 7654 -U siteadmin gwdb
 
-# Persist data on the host's file system. Make sure these are writable.
-#VOLUME ["${DS_DATADIR}"]
+# Put this on its own mountpoint
+ENV DS_DATADIR /srv/arcgisdatastore
+RUN mkdir /srv/arcgisdatastore && chown -R arcgis.arcgis /srv/arcgisdatastore
+VOLUME [ "/srv/arcgisdatastore" ]
 
 # Perhaps if I can set this?
 #ENV ESRI_PROP_FILE_PATH=
@@ -39,6 +36,8 @@ ADD create_new_site.py .
 ADD bashrc .
 ADD start.sh start.sh
 
+# Drop root privileges.
+USER arcgis
 WORKDIR ${HOME}
 
 # Command that will be run by default when you do "docker run"

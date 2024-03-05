@@ -23,8 +23,7 @@ if [ -f $SCRIPT ]; then
   echo "Portal for ArcGIS is already installed."
 else
   echo "Installing Portal"
-  cd /app/PortalForArcGIS && \
-  ./Setup -m silent --verbose -l yes
+  /app/Installer/Setup -m silent --verbose -l yes
 fi
 
 # Is it running already? 

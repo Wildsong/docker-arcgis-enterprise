@@ -28,6 +28,8 @@ ADD start.sh .
 # ESRI uses this in some scripts (including 'backup')
 ENV LOGNAME arcgis
 
+#VOLUME ["/home/arcgis/directories"]
+
 WORKDIR ${HOME}
 
 # The installer will not run as root. It just exits.

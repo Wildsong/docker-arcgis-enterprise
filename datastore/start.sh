@@ -9,15 +9,10 @@
 source /app/bashrc
 cp /app/bashrc /home/arcgis/.bashrc
 
-# I think I want to put DS_DATADIR someplace persistent
-# where does it get defined anyway?
-
-if [ "$DS_DATADIR" == "" ]; then 
-  # Run the ESRI installer script as user 'arcgis' with these options:
-  #   -m silent         silent mode: don't pop up windows, we don't have a screen
-  #   -l yes            Agree to the License Agreement
-  cd /app/ArcGISDataStore && ./Setup -m silent --verbose -l yes -d /home
-fi
+# I changed DS_DATADIR in the Dockerfile, and
+# apparently this affects the default log location too.
+# was LOGDIR=/home/arcgis/datastore/usr/logs
+LOGDIR=${DS_DATADIR}/logs
 
 # Clumsily wipe all log files so when we start there will only be one.
 # TODO find the current logfile instead amd remove only old logs
@@ -25,8 +20,14 @@ rm  -rf $LOGDIR/${HOSTNAME}/server/*.l??
 
 SCRIPT=/home/arcgis/datastore/framework/etc/scripts/arcgisdatastore.sh
 if [ -f ${SCRIPT} ]; then
-  echo "Restarting DataStore"
-  ${SCRIPT} restart
+  # Starting DataStore
+  ${SCRIPT} start   
+else
+  # Run the ESRI installer with these options:
+  #   -m silent         silent mode: don't pop up windows, we don't have a screen
+  #   -l yes            Agree to the License Agreement
+  echo "Installing DataStore."
+  /app/Installer/Setup -m silent --verbose -l yes -d /home
 fi
 
 DATASTORE_URL="https://${HOSTNAME}:2443/arcgis/"
@@ -43,10 +44,6 @@ else
 fi
 
 # Put things in more sensible locations for persistence
-#
-#LOGDIR=/home/arcgis/log
-LOGDIR=/home/arcgis/datastore/usr/arcgisdatastore/logs
-changeloglocation.sh ${LOGDIR}
 #
 #changenosqldslocation.sh ${TILECACHE_DIR}
 #changebackuplocation.sh ${BACKUP_DIR}
@@ -80,6 +77,8 @@ GISSERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
 # Is a site configured?
 #if??
 # I don't know how to check yet.
+# It screws things up if there is already one.
+#
   echo -n "Waiting for GIS Server ${AGE_SERVER}.. "
   curl --retry 7 -sS --insecure --head $GISSERVER_URL > /tmp/dshttp
   if [ $? != 0 ]; then
@@ -87,10 +86,10 @@ GISSERVER_URL="https://${AGE_SERVER}:6443/arcgis/"
   else
     echo "okay!"
   fi
-  echo "Configuring site." 
-  /app/create_new_site.py $AGE_SERVER $AGE_USERNAME $AGE_PASSWORD
-#fi
 
+#  echo "Configuring site." 
+#  /app/create_new_site.py $AGE_SERVER $AGS_USERNAME $AGS_PASSWORD
+#fi
 
 # I can start a process here that finds the current log file
 # and tails it to STDOUT
