@@ -30,23 +30,31 @@ fi
 echo "Server info"
 serverinfo
 
-# Has it been authorized? Maybe run the status command instead of this?
-if [ -f /home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License${ESRI_VERSION}/sysgen/keycodes ]
-then
+KEYCODES="/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License${ESRI_VERSION}/sysgen/keycodes"
+
+# Has it been authorized?
+if authorizeSoftware -s | grep arcsdeserver; then 
+  authorizeSoftware -s | tail -6
+else
   echo "Authorizing."
   authorizeSoftware -f /app/server.prvc
-else
-  authorizeSoftware -s
 fi
+echo ""
 
 SERVER_URL="https://${HOSTNAME}:6443/arcgis/manager/"
 echo -n "Waiting for ArcGIS Server to start..."
-sleep 15
+sleep 10
 curl --retry 6 -sS --insecure $SERVER_URL > /tmp/apphttp
 if [ $? != 0 ]; then
   echo "Server did not start. $?"
 else
   echo "okay!"
+fi
+
+# Has this server been configured?
+if true ; then
+# It's possible to set the web adaptor here too.
+    $HOME/server/tools/configurebasedeployment/configurebasedeployment.sh /app/configurebasedeployment.properties
 fi
 
 echo "Try reaching me at ${SERVER_URL}"

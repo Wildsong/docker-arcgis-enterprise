@@ -29,15 +29,16 @@ services:
     environment:
       - ESRI_VERSION=${ESRI_VERSION}
       - AGS_USERNAME=${USERNAME}
-      - AGS_PASSWORD=${PASSWORD} 
+      - AGS_PASSWORD=${PASSWORD}
     ports:
       - "6080:6080"
       - "6443:6443"
     volumes:
       - ./Installers/ArcGISServer:/app/Installer:ro
+      - ./configurebasedeployment.properties:/app/configurebasedeployment.properties:ro
       - ./Licenses/server.prvc:/app/server.prvc:ro
       - server_home:/home/arcgis:rw
-#      - server_data:/home/directories:rw
+      - server_data:/srv/directories:rw
 #      - server_config:/home/arcgis/server/usr/config-store
 #      - server_logs:/home/arcgis/server/usr/logs
     # Uncomment the next three lines to work in a shell environment for debugging. (See exec_server)
@@ -57,7 +58,7 @@ services:
 #      - ESRI_VERSION=${ESRI_VERSION}
 #      - AGP_USERNAME=${USERNAME}
 #      - AGP_PASSWORD=${PASSWORD} 
-#      - PORTAL_CONTENT=/home/arcgis/content
+#      - PORTAL_CONTENT=/srv/content
 #    ports:
 #      - "7080:7080"
 #      - "7443:7443"

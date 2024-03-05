@@ -1,0 +1,57 @@
+# This file was copied from ArcGISGISServer 11.0 tools/configurebasedeployment/
+# and edited for this project.
+# You still need to copy it to configurebasedeployment.properties
+# and edit some settings, like email address and password
+
+# Configure a base ArcGIS Enterprise deployment properties
+#
+# First name for initial administrator account
+WEBGIS_ADMIN_FIRSTNAME =Admin
+# Last name for initial administrator account
+WEBGIS_ADMIN_LASTNAME =User
+# User name for initial administrator account
+# Can only have the numbers 0-9, the ASCII letters a-z, A-Z and the dot character (.)
+WEBGIS_ADMIN_USERNAME =arcgis
+# Password for primary site administrator.
+# Can only have the numbers 0-9, the ASCII letters a-z, A-Z and the dot character (.)
+WEBGIS_ADMIN_PASSWORD =samplepassword
+# Initially, leave PORTAL_ADMIN_PASSWORD_ENCRYPTED set to false.
+# When you run the tool the first time, the password will be
+# encrypted and PORTAL_ADMIN_PASSWORD_ENCRYPTED will change to true
+WEBGIS_ADMIN_PASSWORD_ENCRYPTED = false
+# E-mail address for initial administrator account
+# e.g username@domain.com
+WEBGIS_ADMIN_EMAIL =
+# This is the index of the secret question to retrieve a forgotten password.
+# The list of questions with their respective index numbers is as follows:
+# 1, What city were you born in ?
+# 2, What was your high school mascot?
+# 3, What is your mother's maiden name?
+# 4, What was the make of your first car?
+# 5, What high school did you go to?
+# 6, What is the last name of your best friend?
+# 7, What is the middle name of your youngest sibling?
+# 8, What is the name of the street on which you grew up?
+# 9, What is the name of your favorite fictional character?
+# 10, What is the name of your favorite pet?
+# 11, What is the name of your favorite restaurant?
+# 12, What is the title of your favorite book?
+# 13, What is your dream job?
+# 14, Where did you go on your first date?
+WEBGIS_ADMIN_SECURITY_QUESTION_INDEX =
+# Answer to the secret question
+# e.g \"My Answer\"
+WEBGIS_ADMIN_SECURITY_QUESTION_ANSWER =
+# AcGIS Enterprise content directory for storing data and configuration files.
+# By default, the content directory will be created locally.
+# e.g./<ArcGIS Enterprise Builder installation directory>/usr
+WEBGIS_CONTENT_DIRECTORY = /srv/directories
+# Specify the Portal Web Adaptor URL on Linux only.
+# Example: https://webadaptorhost.domain.com/<webadaptorname>
+WEBGIS_PORTAL_WEBADAPTOR_URL =
+# Specify the Server Web Adaptor URL on Linux only.
+# Example: https://webadaptorhost.domain.com/<webadaptorname>
+WEBGIS_SERVER_WEBADAPTOR_URL =
+# The path to the Portal license file
+PORTAL_LICENSE_FILE =
+# The id of the user type for the Initial Administrator

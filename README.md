@@ -22,6 +22,7 @@ and 64GB of RAM and a 1TB of NVME storage. That probably helps. :-)
 
 ## To do
 
+* Use .properties files instead of lots of secrets in environment, and put the files in secrets
 * Add a container for Notebook Server; can I run the server in a container when it's managing containers too? We'll see! LOL
 * I am thinking about breaking it into a config stage and a run stage,
 using two compose YAML files.
