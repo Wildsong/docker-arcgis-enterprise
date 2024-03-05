@@ -25,10 +25,6 @@ and 64GB of RAM and a 1TB of NVME storage. That probably helps. :-)
 * Add a container for Notebook Server; can I run the server in a container when it's managing containers too? We'll see! LOL
 * I am thinking about breaking it into a config stage and a run stage,
 using two compose YAML files.
-* I am making it run the installation as root to bypass permissions issues creating folders.
-I'd really like it to run as arcgis and not have full perms on every installed file! Very un-Windows I know but...
-* Remove all the outdated startup files and READMEs
-* Figure out how to use license codes instead of provisioning files.
 * Include some test data including a map or two?
 * Set up Postgres as an Enterprise Geodatabase store.
 
