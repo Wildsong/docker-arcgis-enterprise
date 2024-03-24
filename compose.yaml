@@ -46,45 +46,34 @@ services:
     #stdin_open: true
     #tty: true
 
-# 2024-03-04 Not working on Portal right now
-#  portal:
-#    image: arcgis-portal
-#    hostname: ${PORTAL}
-#    build:
-#      context: ./portal
-#      dockerfile: Dockerfile
-#    env_file: ./.env
-#    environment:
-#      - ESRI_VERSION=${ESRI_VERSION}
-#      - AGP_USERNAME=${USERNAME}
-#      - AGP_PASSWORD=${PASSWORD} 
-#      - PORTAL_CONTENT=/srv/content
-#    ports:
-#      - "7080:7080"
-#      - "7443:7443"
-#    volumes:
-#      - ./Installers/PortalForArcGIS:/app/Installer:ro
-#      - ./Licenses/portal.json:/app/portal_license.json:ro
-#      - portal_home:/home/arcgis:rw
-#      - portal_data:/home/arcgis/content:rw
-      #- portal_data:/home/arcgis/portal/usr/arcgisportal:rw
-#    links:
-#      - server
-#      - datastore
+  portal:
+    image: arcgis-portal
+    hostname: ${PORTAL}
+    build:
+      context: ./portal
+      dockerfile: Dockerfile
+    env_file: ./.env
+    environment:
+      - ESRI_VERSION=${ESRI_VERSION}
+      - AGP_USERNAME=${USERNAME}
+      - AGP_PASSWORD=${PASSWORD} 
+      - PORTAL_CONTENT=/srv/content
+    ports:
+      - "7080:7080"
+      - "7443:7443"
+    volumes:
+      - ./Installers/PortalForArcGIS:/app/Installer:ro
+      - ./Licenses/portal.json:/app/portal_license.json:ro
+      - portal_home:/home/arcgis:rw
+      - portal_data:/home/arcgis/content:rw
+     #- portal_data:/home/arcgis/portal/usr/arcgisportal:rw
+    links:
+      - server
+      - datastore
     # Uncomment the next three lines to work in a shell environment for debugging.
 #    entrypoint: /bin/bash
 #    stdin_open: true
 #    tty: true
-    
-#  web-adaptor:
-#    build: web-adaptor
-#    image: arcgis-web-adaptor
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    links:
-#      - "portal"
-#      - "server"
 
   datastore:
     image: arcgis-datastore
