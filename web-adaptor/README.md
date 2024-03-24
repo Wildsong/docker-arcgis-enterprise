@@ -1,12 +1,10 @@
 # web-adaptor
 Builds an ESRI "ArcGIS Web Adaptor" Docker image that runs on Tomcat + Ubuntu.
 
-## The Web Adaptor
+DEPRECATED -- I am not working on this component, because
+I use Varnish + Hitch. See https://github.com/Wildsong/docker-varnish.
 
-In keeping with the Docker concept, there will be only one service per
-container, this one builds the "Web Adaptor". You will need to run additional
-containers to get the ArcGIS Server and Portal for ArcGIS services
-and connect the services over network connections.
+## The Web Adaptor
 
 Web Adaptor is pretty useless without either ArcGIS Server or Portal for ArcGIS.
 Build and start those first, then come back here.
