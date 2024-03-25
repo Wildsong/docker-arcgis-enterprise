@@ -1,0 +1,14 @@
+FROM postgres:15
+LABEL Author="Brian H Wilson"
+
+ENV PKGLIBDIR /usr/lib/postgresql/15/lib
+
+# I really want ip and ps and ping commands here. I mean, come on! I need them.
+RUN apt-get update && apt-get install -y procps iproute2 iputils-ping
+
+# Add files to support Esri ArcGIS geometry
+COPY Installers/PostgreSQL/15/Linux64/st_geometry.so ${PKGLIBDIR}
+# I wonder what this file is for?
+COPY Installers/PostgreSQL/15/Linux64/PGSQLEngine.so ${PKGLIBDIR}
+
+VOLUME /var/lib/postgresql/data

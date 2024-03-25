@@ -16,8 +16,13 @@ and 64GB of RAM and a 1TB of NVME storage. That probably helps. :-)
 * Data Store: starts, but useless without a Portal
 * Web Adaptor: no longer using it
 
+Enterprise Geodatabase: Currently I am using PostgreSQL, today I used
+the project https://github.com/Wildsong/docker-postgres-replication
+which was created to test PostgreSQL in a replication mode.
+
 ## To do
 
+* Update the wiki
 * Use .properties files instead of lots of secrets in environment, and put the files in secrets
 * I am thinking about breaking it into a config stage and a run stage,
 using two compose YAML files.
@@ -41,33 +46,55 @@ developer license, get in touch.  brian@wildsong.biz
 ## Overview
 
 Check the wiki, https://github.com/Wildsong/docker-arcgis-enterprise/wiki for additional notes.
+2024-03 No actually, don't check that wiki, I have not looked at it in a long long time.
 
-These folders contain files to build a separate Docker image:
+
+These folders contain files to build separate Docker images:
 
 * server/
 * portal/
 * datastore/
+* postgres/
+
+Regarding Postgres - we build our own image for Postgres because we want to use this 
+as an Enterprise Geodatabase Server so it needs to have st_geometry.so
+installed. That's also why the "old" version of Postgres. (Version 15 is the
+highest supported by Esri currently.)
+
+If you don't know what an "Enterprise Geodatabase Server" is, it is a database
+server with support for storing Esri ArcGIS geometry data in its tables.
+
+There is a standalone project for Postgres that includes
+an administrative interface (PGAdmin) and replication (just for testing!)
+See https://github.com/Wildsong/docker-postgres-replication.
 
 ## Preparation
 
 ### Download archives and unpack them
 
 Go to my.esri.com and log in. Go to the Downloads page. Go to Enterprise for Linux.
-Download the components you want to test; Server, Portal, DataStore, Web Adaptor.
-You can start with Server and go from there or dive in and grab all four.
+Download the components you want to test; Server, Portal, Data Store
+and the Postgres geometry file.
+You can start with Server and go from there or dive in and download all.
+
+Put everything in the Installers/ folder.
 
 You have to use your own tar archive files, and you have to unpack them. You need
-the archive for each component; Portal, Server, DataStore, and Web Adaptor. Unpack them
-with the normal tar command, for example
+the archive for each component; Portal, Server, Data Store, and Web Adaptor. Unpack them
+with the normal tar command, for example this will create a folder "ArcGIS_DataStore_Linux". Repeat for the other components.
 
    tar xzvf ArcGIS_DataStore_Linux_111_185305.tar.gz
 
-This will create a folder "ArcGIS_DataStore_Linux". Repeat for the other components.
-I expect to find folders named like this:
-* ArcGISServer
-* ArcGIS_DataStore_Linux
-* PortalForArcGIS
-* ( something for web adaptor )
+The geometry engine comes in a ZIP file, so this should unzip to "PostgreSQL".
+
+   unzip ArcGIS_Enterprise_112_ST_Geometry_PostgreSQL_188228.zip
+
+The Dockerfiles expect to find folders named like this:
+
+* Installers/ArcGISServer
+* Installers/ArcGIS_DataStore_Linux
+* Installers/PortalForArcGIS
+* Installers/PostgreSQL
 
 ### Get license files
 
@@ -77,18 +104,13 @@ Do whatever you need to do to get your Server and Portal files.
 
 * You need a "PRVC" provisioning file for Server named "ArcGISServer.prvc".
 * You need a JSON license file for Portal named "ArcGISPortal.json".
-* DataStore and Web Adaptors don't have any special needs.
+* Data Store doesn't have any special needs.
 
 These file names are hard coded in compose.yaml, you could change them in there if you want.
 
-When I was using my Esri Developer subscription I had no problems getting whatever files I needed. Currently I have to use an 11.1 license because the my.esri.com website won't let me
-generate a new 11.2 PRVC file. Whatever. Maybe I will figure that out tomorrow.
-It's not important to me. I don't care what happened in the move from 11.1 
-to 11.2 as long as I can run something.
-
-You can use a license code (whatever they call those? The ones like "ECP1235678") 
-instead of provisioning files in theory but in the interests of making this as 
-automated as possible I only set it up to use the files.
+When I was using my Esri Developer subscription I had no problems getting whatever files I needed. Currently I have to use an 11.1 license because the my.esri.com website won't let me generate a new 11.2 PRVC file. Whatever. Maybe I will figure 
+that out tomorrow. It's not important to me. I don't care what happened 
+in the move from 11.1 to 11.2 as long as I can run something.
 
 ## Configuration
 
@@ -98,7 +120,9 @@ I put the hostnames into my DNS server, and I used these:
 
 * server.local
 * portal.local
-* daatstore.local
+* datastore.local
+
+Currently there is no reason to have a separate hostname for the Postgres container.
 
 If you are working on one machine, you 
 could just put them in /etc/hosts. (Or whatever works on Windows, lmhosts I guess.)
@@ -129,22 +153,18 @@ Now the unpacked installers are mounted at run time instead.
 The first time you run each container, the service is installed into a Docker volume.
 On subsquent startups, the installer is skipped.
 
-### Build the images using Docker Compose
+#### Build the Ubuntu image
 
-#### Ubuntu image
+The images for Server, Portal, and Data Store are all 
+built on a common "ubuntu-server" image, so first
+build that. (This used to be a separate github repo.)
 
-These all currently use my "ubuntu-server" image, so first
-go build that and then come back here. Maybe I should remove this requirement.
+   docker buildx build -t ubuntu-server ubuntu-server
 
-   git clone https://github.com/docker-ubuntu-server ubuntu-server
-   cd ubuntu-server
-   docker buildx build -t ubuntu-server .
+#### Build the ArcGIS images and the Postgres images
 
-With that out of the way go back to this projects folder... 
-assuming you have the tar and license folders here (see above)
-go ahead and build the ArcGIS Docker images.
-
-#### ArcGIS Docker images
+Assuming you already have the tar and license folders here (see above)
+next build the ArcGIS Docker images.
 
 Build them all, or build them one at a time. In development I built and ran one at a time.
 
@@ -156,9 +176,9 @@ or build one at a time, for example, build the server component,
 
    docker-compose build server
 
-Caching note -- If you are afraid changes are not getting commited to the images when you have
-edited files, you can add the option "--no-cache" to the build line. But chances
-are Docker is building correctly and you forgot to do "docker compose down".
+Caching note -- If you are afraid changes are not getting commited to the
+images when you have edited files, you can add the option "--no-cache" to the build line. But chances are Docker is building correctly and you forgot to do 
+"docker compose down" to remove the previous container(s).
 
 When you are done building you should be able to see each image 
 with the command "docker images"; on my machine I see this:
@@ -167,10 +187,10 @@ with the command "docker images"; on my machine I see this:
    REPOSITORY         TAG       IMAGE ID       CREATED        SIZE
    arcgis-server      latest    0b052cdea386   19 hours ago   609MB
    arcgis-datastore   latest    fdee592f8eca   19 hours ago   602MB
+   arcgis-portal
+   arcgis-postgres
 
-I'd see more but I am still working on this project. :-) This is it for now.
-
-## Run everything
+## Run everything or...
 
 I'm using docker-compose, so you should be able to start (in theory) everything with
 
@@ -178,12 +198,54 @@ I'm using docker-compose, so you should be able to start (in theory) everything 
 
 and they will be running in background because of the -d.
 
-Today I'm only working on Datastore, so I do
+## ..run only one component
+
+Today I'm only working on Data Store, so I can do
 
    docker compose up datastore
 
 This starts only the datastore and leave it running in foreground so
 I can watch the log messages.
+
+Running only the Data Store is only useful when debugging set up,
+since it can't do anything useful without Portal.
+
+### Run Server in standalone mode
+
+You *can* run Server as a standalone service (that is, without Portal or Data Store).
+If you want, you can start Server and Postgres and set them up. Start pgadmin
+too, so you can easily manage the Postgres instance. Here we go,
+
+   docker compose up server postgres pgadmin -d
+
+Server will be running on port 6443, Postgres on its default port 5432,
+and I've put Pgadmin on port 8213 (kind of just a random choice, 
+change it in compose.yaml if you want.)
+
+At this point you can connect to Server or PGadmin via browser.
+
+#### Set up Postgres
+
+Open a browser to PGadmin, https://localhost:8213/
+should work. Login using the credentials you put in .env for PGADMIN.
+Register a connection to your running Postgres by right-clicking "Server" and chosing "Register", use the hostname of the computer you are running on and the port 5432.
+Create a login/role. I call the user "sde". 
+Create a database and make "sde" the owner.
+
+Start up ArcGIS Pro and make a project. Create a new database connection.
+Use the geoprocessing tool "Enable Enterprise Database". Have your "keycodes" file ready.
+Save an SDE file (one will be automatically created, note its name and location.)
+
+#### Create a site
+
+Once you have a working EGDB (Enterprise Geodatabase) then you can use the
+Server Manager to register it as a data store. Login and upload the SDE file you
+created in ArcGIS Pro, and it should then show the database as available.
+
+   https://server.local:6443/server/manager/site.html
+
+At this point you should have a functional EGDB and a functional ArcGIS Server.
+In ArcGIS Pro, import a feature class and publish to server.
 
 ### Other tips on startup
 
@@ -224,13 +286,9 @@ There is a password reset command,
 
 Here is where the authorization codes for software are kept:
 
-    /home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License11.1/sysgen/keycodes
+    /home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License11.0/sysgen/keycodes
 
-If you persist keycodes then you don't need to keep rerunning the licensing routine.
-
-Here is where the hostname is kept: server/framework/postinstall.dat
-
-### DataStore
+### Data Store
 
 Runs a web server on port 2443 and its postgres server on 9876
 CouchDB is used for a tile store if you start one, on ports 

@@ -13,7 +13,7 @@ ADD limits.conf /etc/security/limits.conf
 # Add the repository for Postgres client
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main" >> /etc/apt/sources.list
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-# -- This is for ArcGIS 11.1
+# -- This is for ArcGIS 11.0, 11.1
 RUN apt-get update && apt-get install -y postgresql-client-14
 # -- This is for ArcGIS 11.2 
 #RUN apt-get update && apt-get install -y postgresql-client-15

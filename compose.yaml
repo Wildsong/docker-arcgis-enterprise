@@ -17,6 +17,10 @@ volumes:
     name: arcgis_datastore_home
   datastore_data:
     name: arcgis_datastore_data
+  postgres_data:
+    name: arcgis_postgres_data
+  pgadmin_data:
+    name: arcgis_pgadmin_data
 
 services:
   server:
@@ -98,7 +102,34 @@ services:
     links:
       - server
     # Uncomment the next three lines to work in a shell environment for debugging.
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
+    #entrypoint: /bin/bash
+    #stdin_open: true
+    #tty: true
 
+  postgres:
+    image: postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    ports:
+      # Allow access to this database from our LAN
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "8213:80"
+    volumes:
+      # Session data, user files, config files, config database go here.
+      - pgadmin_data:/var/lib/pgadmin
+    env_file: .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_DISABLE_POSTFIX: 1

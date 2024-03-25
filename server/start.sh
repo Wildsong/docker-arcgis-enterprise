@@ -43,17 +43,18 @@ echo ""
 
 SERVER_URL="https://${HOSTNAME}:6443/arcgis/manager/"
 echo -n "Waiting for ArcGIS Server to start..."
-sleep 10
-curl --retry 6 -sS --insecure $SERVER_URL > /tmp/apphttp
-if [ $? != 0 ]; then
-  echo "Server did not start. $?"
-else
-  echo "okay!"
-fi
+sleep 10 
 
-# Has this server been configured?
-if true ; then
-    configurebasedeployment.sh -f /app/configurebasedeployment.properties
+# Has this server been configured? 
+# This requires a running portal so I don't do it.
+if false ; then
+  curl --retry 6 -sS --insecure $SERVER_URL > /tmp/apphttp
+  if [ $? != 0 ]; then
+    echo "Server did not start. $?"
+  else
+    echo "okay!"
+  fi
+  configurebasedeployment.sh -f /app/configurebasedeployment.properties
 fi
 
 echo "Try reaching me at ${SERVER_URL}"
