@@ -1,0 +1,5 @@
+# Try to connect to Postgres,
+# for example, run "./exec_postgres bash" to get a shell.
+
+# I expect it to have a name like "arcgis-postgres"
+docker exec -it `docker ps | grep "postgres" | cut -b 1-12` $*
