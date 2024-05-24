@@ -18,6 +18,9 @@ ENV LOGNAME arcgis
 
 WORKDIR ${HOME}
 
+# The installer will not run as root.
+USER arcgis
+
 # Set path so we can run psql from bash shell
 # Note that it's listening on port 7654, so try
 # psql -h localhost -p 7654 -U siteadmin gwdb

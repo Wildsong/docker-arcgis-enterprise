@@ -4,14 +4,14 @@ export PS1="Portal$ "
 # In Portal, each tool is in a separate folder in
 # tools/ -- bad idea.. whatever.. there are more tools
 # these are just the ones I added today.
-PATH=$PATH:${HOME}/portal:\
-${HOME}/portal/framework/etc:\
-${HOME}/portal/tools/accountmanagement:\
-${HOME}/portal/tools/createportal:\
-${HOME}/portal/tools/operationalhealth:\
-${HOME}/portal/tools/importlicense:\
-${HOME}/portal/tools/indexer:\
-${HOME}/portal/tools/portaldiag:\
-${HOME}/portal/tools/webgisdr
+PATH=$PATH:$HOME/portal:\
+$HOME/portal/framework/etc:\
+$HOME/portal/tools/accountmanagement:\
+$HOME/portal/tools/createportal:\
+$HOME/portal/tools/operationalhealth:\
+$HOME/portal/tools/importlicense:\
+$HOME/portal/tools/indexer:\
+$HOME/portal/tools/portaldiag:\
+$HOME/portal/tools/webgisdr
 
 export PATH
